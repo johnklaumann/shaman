@@ -1,0 +1,57 @@
+{
+  "pairs": [
+    {
+      "id": "react-rerender",
+      "kind": "explanation",
+      "def": 119,
+      "sha": 63,
+      "saved": 0.47058823529411764
+    },
+    {
+      "id": "auth-expiry-bug",
+      "kind": "diagnosis",
+      "def": 99,
+      "sha": 60,
+      "saved": 0.3939393939393939
+    },
+    {
+      "id": "change-summary",
+      "kind": "status",
+      "def": 90,
+      "sha": 38,
+      "saved": 0.5777777777777777
+    },
+    {
+      "id": "pooling-tradeoff",
+      "kind": "recommendation",
+      "def": 111,
+      "sha": 62,
+      "saved": 0.4414414414414415
+    },
+    {
+      "id": "undefined-map-error",
+      "kind": "diagnosis",
+      "def": 107,
+      "sha": 58,
+      "saved": 0.4579439252336449
+    },
+    {
+      "id": "react-rerender-pt",
+      "kind": "explanation",
+      "def": 126,
+      "sha": 68,
+      "saved": 0.46031746031746035
+    },
+    {
+      "id": "mutex-explain-pt",
+      "kind": "explanation",
+      "def": 140,
+      "sha": 70,
+      "saved": 0.5
+    }
+  ],
+  "pooledSaved": 0.4709595959595959,
+  "meanSaved": 0.47171546200054804,
+  "sumDef": 792,
+  "sumSha": 419
+}

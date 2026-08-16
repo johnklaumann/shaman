@@ -1,0 +1,25 @@
+{
+  "rules": {
+    "full": {
+      "chars": 1611,
+      "words": 237,
+      "tokens": 385
+    },
+    "lite": {
+      "chars": 1514,
+      "words": 223,
+      "tokens": 361
+    },
+    "ultra": {
+      "chars": 1665,
+      "words": 246,
+      "tokens": 397
+    },
+    "off": {
+      "chars": 0,
+      "words": 0,
+      "tokens": 0
+    }
+  },
+  "nodeBootMedianMs": 73.0421
+}

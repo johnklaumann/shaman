@@ -1,0 +1,49 @@
+{
+  "prompts": 44,
+  "vagueRecall": 1,
+  "vagueBlock": 1,
+  "mediumCaught": 1,
+  "strongSilent": 1,
+  "falseBlocks": 0,
+  "legit": 22,
+  "latencyMeanMs": 92.85792727272725,
+  "latencyP95Ms": 108.9916,
+  "cats": {
+    "vague": {
+      "block": 16,
+      "enrich": 0,
+      "pass": 0,
+      "total": 16
+    },
+    "medium": {
+      "block": 0,
+      "enrich": 6,
+      "pass": 0,
+      "total": 6
+    },
+    "strong": {
+      "block": 0,
+      "enrich": 0,
+      "pass": 9,
+      "total": 9
+    },
+    "question": {
+      "block": 0,
+      "enrich": 0,
+      "pass": 5,
+      "total": 5
+    },
+    "ack": {
+      "block": 0,
+      "enrich": 0,
+      "pass": 5,
+      "total": 5
+    },
+    "conv": {
+      "block": 0,
+      "enrich": 0,
+      "pass": 3,
+      "total": 3
+    }
+  }
+}

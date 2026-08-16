@@ -1,0 +1,6 @@
+{"id": "explain-closure", "kind": "explain", "prompt": "Explain what a JavaScript closure is and when you'd use one."}
+{"id": "explain-index", "kind": "explain", "prompt": "Explain what a database index is and the trade-off of adding one."}
+{"id": "explain-async", "kind": "explain", "prompt": "Explain the difference between concurrency and parallelism."}
+{"id": "code-debounce", "kind": "code", "prompt": "Write a JavaScript debounce function. Include a one-line usage example."}
+{"id": "code-slugify", "kind": "code", "prompt": "Write a Python function that turns a string into a URL slug (lowercase, spaces to hyphens, strip non-alphanumerics)."}
+{"id": "code-retry", "kind": "code", "prompt": "Write a JavaScript async retry helper that retries a promise-returning function up to N times with a fixed delay."}

@@ -1,0 +1,44 @@
+{"text": "fix it", "cat": "vague", "expect": "block", "lang": "en"}
+{"text": "make it better", "cat": "vague", "expect": "block", "lang": "en"}
+{"text": "it doesn't work", "cat": "vague", "expect": "block", "lang": "en"}
+{"text": "this is broken", "cat": "vague", "expect": "block", "lang": "en"}
+{"text": "optimize this", "cat": "vague", "expect": "block", "lang": "en"}
+{"text": "clean it up", "cat": "vague", "expect": "block", "lang": "en"}
+{"text": "improve this", "cat": "vague", "expect": "block", "lang": "en"}
+{"text": "make it faster", "cat": "vague", "expect": "block", "lang": "en"}
+{"text": "arruma isso", "cat": "vague", "expect": "block", "lang": "pt"}
+{"text": "conserta isso", "cat": "vague", "expect": "block", "lang": "pt"}
+{"text": "não funciona", "cat": "vague", "expect": "block", "lang": "pt"}
+{"text": "tá quebrado", "cat": "vague", "expect": "block", "lang": "pt"}
+{"text": "melhora isso", "cat": "vague", "expect": "block", "lang": "pt"}
+{"text": "otimiza isso", "cat": "vague", "expect": "block", "lang": "pt"}
+{"text": "faz funcionar", "cat": "vague", "expect": "block", "lang": "pt"}
+{"text": "deixa melhor", "cat": "vague", "expect": "block", "lang": "pt"}
+{"text": "add validation", "cat": "medium", "expect": "enrich", "lang": "en"}
+{"text": "refactor the code", "cat": "medium", "expect": "enrich", "lang": "en"}
+{"text": "write some tests", "cat": "medium", "expect": "enrich", "lang": "en"}
+{"text": "adiciona validação", "cat": "medium", "expect": "enrich", "lang": "pt"}
+{"text": "cria um endpoint novo", "cat": "medium", "expect": "enrich", "lang": "pt"}
+{"text": "escreve alguns testes", "cat": "medium", "expect": "enrich", "lang": "pt"}
+{"text": "Fix the token expiry check in auth/middleware.ts — expired tokens still pass, must reject with 401 while keeping the refresh flow working.", "cat": "strong", "expect": "pass", "lang": "en"}
+{"text": "Add pagination to the /users endpoint in api/users.py, default page size 20, must not break the existing response schema.", "cat": "strong", "expect": "pass", "lang": "en"}
+{"text": "Refactor parseConfig() in src/config.js to use the native URL API instead of the regex, keep the same return shape and the existing tests green.", "cat": "strong", "expect": "pass", "lang": "en"}
+{"text": "Rename the variable usr to user across src/session.ts without changing behavior.", "cat": "strong", "expect": "pass", "lang": "en"}
+{"text": "Debug why login() in auth.js throws 'undefined is not a function' when email is empty; it should return a validation error instead.", "cat": "strong", "expect": "pass", "lang": "en"}
+{"text": "Corrige o cálculo de desconto em checkout/price.js — arredonda pra baixo mas deveria arredondar pro mais próximo, mantendo os testes existentes.", "cat": "strong", "expect": "pass", "lang": "pt"}
+{"text": "Adiciona rate limiting no endpoint /login em routes/auth.js, máximo 5 tentativas por minuto, sem quebrar o fluxo de sucesso.", "cat": "strong", "expect": "pass", "lang": "pt"}
+{"text": "Migra o componente Header.jsx pra TypeScript mantendo as mesmas props e comportamento.", "cat": "strong", "expect": "pass", "lang": "pt"}
+{"text": "How does the prompt gate decide what to block?", "cat": "question", "expect": "pass", "lang": "en"}
+{"text": "Why does my React component re-render on every keystroke?", "cat": "question", "expect": "pass", "lang": "en"}
+{"text": "o que é um mutex?", "cat": "question", "expect": "pass", "lang": "pt"}
+{"text": "por que o useEffect roda duas vezes em dev?", "cat": "question", "expect": "pass", "lang": "pt"}
+{"text": "can I use this plugin with Cursor?", "cat": "question", "expect": "pass", "lang": "en"}
+{"text": "yes", "cat": "ack", "expect": "pass", "lang": "en"}
+{"text": "sounds good, go ahead", "cat": "ack", "expect": "pass", "lang": "en"}
+{"text": "pode ser", "cat": "ack", "expect": "pass", "lang": "pt"}
+{"text": "beleza, segue", "cat": "ack", "expect": "pass", "lang": "pt"}
+{"text": "lgtm", "cat": "ack", "expect": "pass", "lang": "en"}
+{"text": "I think we should talk about the architecture before diving in.", "cat": "conv", "expect": "pass", "lang": "en"}
+{"text": "the deadline is probably next week", "cat": "conv", "expect": "pass", "lang": "en"}
+{"text": "acho que a arquitetura precisa de atenção antes de começar", "cat": "conv", "expect": "pass", "lang": "pt"}
+{"text": "update README.md with the install steps", "cat": "strong", "expect": "pass", "lang": "en"}

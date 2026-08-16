@@ -64,7 +64,52 @@ Honesty notes:
 - Usage is deduplicated by `requestId` — one API response is stored once per content block in the transcript, so a naive sum overcounts ~3x.
 - Each session is stamped with the mode it **started** under; switch modes mid-session and it's tagged `mixed` and excluded from comparisons, so the on-vs-off numbers stay honest.
 - The transcript format is internal to Claude Code and may change between versions. Numbers are estimates; `/usage` is the source of truth.
-- No benchmark claims in this README until measured. Run `/shaman-bench` and get your own.
+- The measured cases below come from the scripts in [`bench/`](bench/); `/shaman-bench` gives your own per-session numbers.
+
+## Real cases (measured)
+
+Every number here is produced by a script in [`bench/`](bench/) — run them and they overwrite `bench/results/*.json`. Token counts use `tiktoken` cl100k as a proxy for Claude's (non-public) tokenizer; treat as estimates within ~10-15%.
+
+### Prompt gate — 44 prompts (EN+PT), zero false blocks
+
+`node bench/gate-bench.mjs` runs a hand-labeled corpus through the **real** `gate.js` and reads each verdict from the hook's actual exit contract:
+
+| category | n | blocked | enriched | passed |
+|----------|---|---------|----------|--------|
+| vague (`fix it`, `arruma isso`, `make it faster`) | 16 | 16 | 0 | 0 |
+| medium (`add validation`, `escreve testes`) | 6 | 0 | 6 | 0 |
+| strong (target + constraint) | 9 | 0 | 0 | 9 |
+| questions | 5 | 0 | 0 | 5 |
+| acknowledgements | 5 | 0 | 0 | 5 |
+| plain conversation | 3 | 0 | 0 | 3 |
+
+- **100%** of vague prompts caught — all 16 hard-blocked before a token is spent.
+- **0 / 22** false blocks on legitimate prompts (strong tasks, questions, acks, conversation) — the "never gets in your way" promise holds on this corpus.
+- **~93 ms** per prompt end-to-end (73 ms node cold-start + ~20 ms heuristic); the regex itself is sub-millisecond, no API call.
+
+The corpus is ours and small: it shows the heuristic behaves as designed on clear-cut cases, not that it is perfect on every phrasing. Extend `bench/corpus/prompts.jsonl` and re-run.
+
+### Talk economy — 47% fewer output tokens on matched content
+
+`node bench/compress-bench.mjs` measures output tokens on 7 pairs holding technical content constant, default prose vs shaman full:
+
+| response kind | default | shaman | saved |
+|---|---|---|---|
+| explanation | 119 | 63 | 47% |
+| diagnosis | 99 | 60 | 39% |
+| status update | 90 | 38 | 58% |
+| recommendation | 111 | 62 | 44% |
+| **pooled (7 pairs)** | **792** | **419** | **47%** |
+
+Facts, code, and numbers are preserved by construction — the pairs live in `bench/corpus/pairs.jsonl` for inspection. This measures the **style**, not your workload; it is not a live session delta. (Caveman reports ~65% on its own corpus; shaman's rule "if terse isn't shorter, use plain" trades some compression for readability.)
+
+### Footprint — 385 tokens, injected once
+
+`node bench/footprint.mjs`: full **385**, lite 361, ultra 397, off 0 tokens (cl100k proxy) — injected once at SessionStart, not per turn.
+
+### End-to-end + code generation — run your own
+
+The talk and "build less" pillars only show their full end-to-end effect on live sessions. `node bench/live-ab.mjs` runs each task in `bench/corpus/tasks.jsonl` through `claude -p` twice (off vs on), comparing real `output_tokens` and code line count. It spends tokens and must run from a plain terminal (not nested inside Claude Code). True to this plugin's ethos: don't trust a README's end-to-end number — generate your own with `bench/live-ab.mjs` or `/shaman-bench`.
 
 ## Other tools (Cursor, Codex CLI, GitHub Copilot)
 
@@ -80,14 +125,14 @@ The prompt gate and benchmarks need hooks, which only Claude Code wires up in v0
 
 ## Design principles (dogfooded)
 
-- **No skills, no MCP server.** Skill descriptions cost context in every session; shaman is hooks + commands only. The entire injected ruleset is ~350 tokens — compare ~1–1.5k for comparable plugins.
+- **No skills, no MCP server.** Skill descriptions cost context in every session; shaman is hooks + commands only. The entire injected ruleset is ~385 tokens (measured, `bench/footprint.mjs`) — compare ~1–1.5k for comparable plugins.
 - **Zero dependencies.** Plain Node stdlib. Nothing to install, nothing to audit.
 - **Fail open.** Every hook wraps in try/catch and exits 0 on its own errors — a style plugin must never break your session.
 - **No silent claims.** Benchmarks come from your transcripts, not our marketing.
 
 ## Credits
 
-- [caveman](https://github.com/JuliusBrussee/caveman) by Julius Brussee (MIT) — the token-economy DNA and the SessionStart persistence pattern. Caveman's own benchmark reports ~65% average output-token reduction for this style; shaman claims nothing until your `/shaman-bench` says so.
+- [caveman](https://github.com/JuliusBrussee/caveman) by Julius Brussee (MIT) — the token-economy DNA and the SessionStart persistence pattern. Caveman's own benchmark reports ~65% average output-token reduction for this style; shaman measures ~47% on its own matched-content corpus (`bench/compress-bench.mjs`) and claims nothing more until your `/shaman-bench` says so.
 - [ponytail](https://github.com/DietrichGebert/ponytail) by Dietrich Gebert — the decision ladder and the lazy-senior-dev philosophy.
 - Shaman adds the third pillar: gating the prompt itself.
 
