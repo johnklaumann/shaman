@@ -1,0 +1,25 @@
+{
+  "name": "shaman",
+  "displayName": "Shaman",
+  "version": "0.1.0",
+  "description": "Tribe elder for your AI agent: terse talk, minimal code, best practices — and a prompt gate that stops bad prompts before they burn tokens.",
+  "author": {
+    "name": "John Klaumann",
+    "url": "https://github.com/johnklaumann"
+  },
+  "homepage": "https://github.com/johnklaumann/shaman",
+  "repository": "https://github.com/johnklaumann/shaman",
+  "license": "MIT",
+  "keywords": [
+    "tokens",
+    "token-economy",
+    "prompt-engineering",
+    "yagni",
+    "best-practices",
+    "claude-code",
+    "cursor",
+    "codex",
+    "copilot",
+    "productivity"
+  ]
+}
