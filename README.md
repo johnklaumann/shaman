@@ -107,9 +107,28 @@ Facts, code, and numbers are preserved by construction — the pairs live in `be
 
 `node bench/footprint.mjs`: full **385**, lite 361, ultra 397, off 0 tokens (cl100k proxy) — injected once at SessionStart, not per turn.
 
-### End-to-end + code generation — run your own
+### End-to-end + code generation — 8 live tasks, 3 trials each
 
-The talk and "build less" pillars only show their full end-to-end effect on live sessions. `node bench/live-ab.mjs` runs each task in `bench/corpus/tasks.jsonl` through `claude -p` twice (off vs on), comparing real `output_tokens` and code line count. It spends tokens and must run from a plain terminal (not nested inside Claude Code). True to this plugin's ethos: don't trust a README's end-to-end number — generate your own with `bench/live-ab.mjs` or `/shaman-bench`.
+`node bench/live-ab.mjs` is the only bench that calls the model. For each task in `bench/corpus/tasks.jsonl` it runs `claude -p` — plugin off, then on (`rules/core.md` appended as system prompt) — and compares real `output_tokens` plus lines across all emitted code blocks. Model output is high-variance, so each task runs 3 trials per side and the numbers below are means. One run, `claude-haiku-4-5`, ~$0.22:
+
+| task | off tok | on tok | saved | off LOC | on LOC |
+|---|---|---|---|---|---|
+| debounce | 306 | 383 | −25% | 9.0 | 8.7 |
+| slugify | 782 | 600 | 23% | 22.0 | 12.0 |
+| retry helper | 681 | 648 | 5% | 34.7 | 19.3 |
+| email validate | 728 | 577 | 21% | 22.3 | 8.7 |
+| flatten array | 583 | 533 | 9% | 27.0 | 14.7 |
+| read config | 836 | 686 | 18% | 31.3 | 20.7 |
+| explain closure | 587 | 538 | 8% | – | – |
+| explain index | 578 | 457 | 21% | – | – |
+| **pooled mean** | **5081** | **4422** | **13%** | **146** | **84** |
+
+- **~13% fewer output tokens** end-to-end — real but modest and noisy (debounce went the other way; per-task token ranges span ±30%). Code is incompressible by design — the ruleset never compresses code — so the savings come from the prose around it, not the code.
+- **~43% fewer lines of code** across the 6 coding tasks (146 → 84), and every code task dropped. This is the "build less" pillar, and it is the more stable code-gen signal.
+
+Concretely, the email task (22 → 9 lines, both correct, same regex): the off run wraps it in a multi-line docstring and a bulleted breakdown; the on run gives the same function with a one-line docstring, then adds the senior-dev call — *"if you need stricter validation (DNS checks, RFC 5322), use the `email-validator` package; for most cases regex is sufficient"* — pointing at the dependency instead of hand-rolling more.
+
+Honest limits: one run, one model, small n, high variance — directional, not a guarantee. Fewer lines is only a win when correctness holds (spot-checked here; `bench/results/live.json` stores every trial and a sample output for inspection). And the ruleset trims prose more reliably than it prevents over-answering — on the array-flatten task both sides offered several variants. Re-run `bench/live-ab.mjs`, or use `/shaman-bench` on real sessions, for your own numbers.
 
 ## Other tools (Cursor, Codex CLI, GitHub Copilot)
 

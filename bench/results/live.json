@@ -1,0 +1,245 @@
+{
+  "model": "claude-haiku-4-5",
+  "trials": 3,
+  "tasks": [
+    {
+      "id": "code-debounce",
+      "kind": "code",
+      "offTokMean": 305.6666666666667,
+      "onTokMean": 383.3333333333333,
+      "saved": -0.25408942202835316,
+      "offLocMean": 9,
+      "onLocMean": 8.666666666666666,
+      "offToks": [
+        299,
+        316,
+        302
+      ],
+      "onToks": [
+        395,
+        369,
+        386
+      ],
+      "offLocs": [
+        9,
+        9,
+        9
+      ],
+      "onLocs": [
+        9,
+        9,
+        8
+      ],
+      "sampleOff": "Here's a JavaScript debounce function:\n\n```javascript\nfunction debounce(func, delay) {\n  let timeoutId;\n  return function (...args) {\n    clearTimeout(timeoutId);\n    timeoutId = setTimeout(() => func(...args), delay);\n  };\n}\n\n// Usage example:\nconst debouncedSearch = debounce((query) => console.log('Searching:', query), 300);\n```\n\nThis function:\n- Takes a function and a delay in milliseconds\n- Returns a new function that delays execution\n- Cancels previous calls if a new one comes in within the delay period\n- Is useful for scenarios like search inputs, window resizing, or API calls where you want to wait for the user to stop performing an action before reacting",
+      "sampleOn": "```javascript\nfunction debounce(fn, delay) {\n  let timeoutId;\n  return function(...args) {\n    clearTimeout(timeoutId);\n    timeoutId = setTimeout(() => fn(...args), delay);\n  };\n}\n\n// Usage:\nconst handleSearch = debounce((query) => fetch(`/api/search?q=${query}`), 300);\n```\n\nFunction delays execution until `delay` milliseconds pass without new invocations. Cancels pending calls on each new invocation."
+    },
+    {
+      "id": "code-slugify",
+      "kind": "code",
+      "offTokMean": 782.3333333333334,
+      "onTokMean": 600,
+      "saved": 0.23306348530038346,
+      "offLocMean": 22,
+      "onLocMean": 12,
+      "offToks": [
+        959,
+        692,
+        696
+      ],
+      "onToks": [
+        676,
+        507,
+        617
+      ],
+      "offLocs": [
+        28,
+        18,
+        20
+      ],
+      "onLocs": [
+        14,
+        12,
+        10
+      ],
+      "sampleOff": "Here's a Python function to convert strings to URL slugs:\n\n```python\nimport re\n\ndef slugify(text):\n    \"\"\"Convert a string to a URL slug.\"\"\"\n    # Convert to lowercase\n    text = text.lower()\n    # Replace spaces with hyphens\n    text = text.replace(' ', '-')\n    # Remove non-alphanumeric characters (except hyphens)\n    text = re.sub(r'[^a-z0-9-]', '', text)\n    # Replace multiple consecutive hyphens with a single hyphen\n    text = re.sub(r'-+', '-', text)\n    # Strip leading/trailing hyphens\n    text = text.strip('-')\n    return text\n```\n\nExample usage:\n```python\nprint(slugify(\"Hello World!\"))              # hello-world\nprint(slugify(\"The Quick Brown Fox\"))       # the-quick-brown-fox\nprint(slugify(\"Multiple   Spaces\"))         # multiple-spaces\nprint(slugify(\"Special!@#$%Characters\"))    # specialcharacters\nprint(slugify(\"  Leading and trailing  \"))  # leading-and-trailing\n```\n\nIf you prefer a version without regex:\n\n```python\ndef slugify(text):\n    \"\"\"Convert a string to a URL slug (no regex).\"\"\"\n    text = text.lower()\n    text = text.replace(' ', '-')\n    text = ''.join(c for c in text if c.isalnum() or c == '-')\n    while '--' in text:\n        text = text.replace('--', '-')\n    text = text.strip('-')\n    return text\n```\n\nBoth versions handle all your requirements: lowercase conversion, space-to-hyphen replacement, non-alphanumeric stripping, and clean up multiple hyphens. The regex version is more concise and efficient for longer strings.",
+      "sampleOn": "```python\nimport re\n\ndef to_slug(text: str) -> str:\n    text = text.lower()\n    text = text.replace(' ', '-')\n    text = re.sub(r'[^a-z0-9-]', '', text)\n    text = re.sub(r'-+', '-', text)\n    return text.strip('-')\n```\n\nExamples:\n```python\nto_slug(\"Hello World!\")  # \"hello-world\"\nto_slug(\"Foo  &  Bar\")   # \"foo-bar\"\nto_slug(\"---test---\")    # \"test\"\n```\n\nIf you don't want to import `re`, simpler alternative:\n\n```python\ndef to_slug(text: str) -> str:\n    text = text.lower()\n    text = text.replace(' ', '-')\n    return ''.join(c for c in text if c.isalnum() or c == '-')\n```\n\nFirst version collapses multiple consecutive hyphens; second doesn't."
+    },
+    {
+      "id": "code-retry",
+      "kind": "code",
+      "offTokMean": 680.6666666666666,
+      "onTokMean": 647.6666666666666,
+      "saved": 0.048481880509304576,
+      "offLocMean": 34.666666666666664,
+      "onLocMean": 19.333333333333332,
+      "offToks": [
+        681,
+        705,
+        656
+      ],
+      "onToks": [
+        650,
+        555,
+        738
+      ],
+      "offLocs": [
+        44,
+        30,
+        30
+      ],
+      "onLocs": [
+        22,
+        18,
+        18
+      ],
+      "sampleOff": "I'll write a JavaScript async retry helper function for you:\n\n```javascript\n/**\n * Retries a promise-returning function up to N times with a fixed delay\n * @param {Function} fn - The async function to retry\n * @param {number} maxRetries - Maximum number of retry attempts\n * @param {number} delayMs - Delay in milliseconds between retries\n * @returns {Promise} The result of the function\n * @throws {Error} If all retries are exhausted\n */\nasync function retry(fn, maxRetries, delayMs) {\n  let lastError;\n  \n  for (let attempt = 0; attempt <= maxRetries; attempt++) {\n    try {\n      return await fn();\n    } catch (error) {\n      lastError = error;\n      \n      // If this was the last attempt, throw the error\n      if (attempt === maxRetries) {\n        break;\n      }\n      \n      // Wait before retrying\n      await new Promise(resolve => setTimeout(resolve, delayMs));\n    }\n  }\n  \n  throw lastError;\n}\n```\n\n**Usage example:**\n\n```javascript\n// Example: Retry an API call\nasync function fetchData() {\n  const response = await fetch('https://api.example.com/data');\n  if (!response.ok) throw new Error(`HTTP ${response.status}`);\n  return response.json();\n}\n\n// Retry up to 3 times with 1000ms delay between attempts\ntry {\n  const data = await retry(fetchData, 3, 1000);\n  console.log('Success:', data);\n} catch (error) {\n  console.error('Failed after retries:', error);\n}\n\n// Example: With arrow function\nconst result = await retry(\n  () => someAsyncOperation(),\n  5,           // max 5 retries\n  2000         // 2 second delay\n);\n```\n\n**Key features:**\n- Supports any promise-returning function\n- Configurable retry count and delay\n- Preserves the original error on final failure\n- Simple and lightweight implementation\n\nIf you need more advanced features (exponential backoff, jitter, logging), let me know and I can expand it.",
+      "sampleOn": "Here's a clean async retry helper:\n\n```javascript\nasync function retry(fn, maxAttempts, delayMs) {\n  let lastError;\n  \n  for (let attempt = 1; attempt <= maxAttempts; attempt++) {\n    try {\n      return await fn();\n    } catch (error) {\n      lastError = error;\n      if (attempt < maxAttempts) {\n        await new Promise(resolve => setTimeout(resolve, delayMs));\n      }\n    }\n  }\n  \n  throw lastError;\n}\n```\n\n**Usage:**\n\n```javascript\n// Retry up to 3 times with 1000ms delay\nawait retry(() => fetchData(), 3, 1000);\n\n// With async function\nawait retry(async () => {\n  const response = await fetch(url);\n  if (!response.ok) throw new Error('Request failed');\n  return response.json();\n}, 5, 2000);\n```\n\n**How it works:**\n- Loops up to `maxAttempts` times\n- Returns immediately on success\n- Catches errors and waits `delayMs` before next attempt (skips wait after final attempt)\n- Throws last error if all attempts fail"
+    },
+    {
+      "id": "code-email",
+      "kind": "code",
+      "offTokMean": 728,
+      "onTokMean": 577.3333333333334,
+      "saved": 0.2069597069597069,
+      "offLocMean": 22.333333333333332,
+      "onLocMean": 8.666666666666666,
+      "offToks": [
+        825,
+        677,
+        682
+      ],
+      "onToks": [
+        733,
+        475,
+        524
+      ],
+      "offLocs": [
+        21,
+        24,
+        22
+      ],
+      "onLocs": [
+        10,
+        5,
+        11
+      ],
+      "sampleOff": "Here's a Python function to validate email addresses:\n\n```python\nimport re\n\ndef is_plausible_email(email):\n    \"\"\"\n    Validate that a string is a plausible email address.\n    \n    Returns True if the email appears to be valid, False otherwise.\n    This uses a simple regex pattern that covers common cases.\n    \"\"\"\n    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'\n    return re.match(pattern, email) is not None\n```\n\nThis function checks for:\n- **Local part** (before `@`): letters, numbers, dots, underscores, percent signs, plus signs, and hyphens\n- **Domain name**: letters, numbers, dots, and hyphens\n- **TLD** (after final dot): at least 2 letters\n\nExample usage:\n\n```python\nprint(is_plausible_email(\"user@example.com\"))        # True\nprint(is_plausible_email(\"john.doe@company.co.uk\"))  # True\nprint(is_plausible_email(\"invalid@domain\"))          # False (no TLD)\nprint(is_plausible_email(\"@example.com\"))            # False (no local part)\nprint(is_plausible_email(\"user@.com\"))               # False (no domain)\n```\n\nIf you need more strict RFC 5322 compliance, you can use the `email-validator` library instead:\n\n```python\nfrom email_validator import validate_email, EmailNotValidError\n\ndef is_plausible_email(email):\n    try:\n        validate_email(email)\n        return True\n    except EmailNotValidError:\n        return False\n```\n\nThe regex approach is sufficient for most use cases and doesn't require additional dependencies. The library approach is better if you need DNS validation or full RFC compliance.",
+      "sampleOn": "```python\nimport re\n\ndef is_valid_email(email: str) -> bool:\n    \"\"\"Validate a string is a plausible email address.\"\"\"\n    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'\n    return bool(re.match(pattern, email))\n```\n\nPattern covers:\n- Local part: alphanumerics, dots, underscores, percent, plus, hyphen\n- @ separator\n- Domain: alphanumerics, dots, hyphens\n- TLD: at least 2 letters\n\nExamples:\n```python\nis_valid_email(\"user@example.com\")      # True\nis_valid_email(\"john+tag@domain.co.uk\") # True\nis_valid_email(\"invalid.email\")         # False\nis_valid_email(\"@example.com\")          # False\nis_valid_email(\"user@domain\")           # False\n```\n\nIf you need stricter validation (DNS checks, RFC 5322 compliance), use the `email-validator` package. For most cases, regex is sufficient."
+    },
+    {
+      "id": "code-flatten",
+      "kind": "code",
+      "offTokMean": 583.3333333333334,
+      "onTokMean": 532.6666666666666,
+      "saved": 0.08685714285714297,
+      "offLocMean": 27,
+      "onLocMean": 14.666666666666666,
+      "offToks": [
+        586,
+        638,
+        526
+      ],
+      "onToks": [
+        542,
+        536,
+        520
+      ],
+      "offLocs": [
+        22,
+        37,
+        22
+      ],
+      "onLocs": [
+        24,
+        11,
+        9
+      ],
+      "sampleOff": "Here's a JavaScript function that flattens arbitrarily nested arrays:\n\n```javascript\nfunction flatten(arr) {\n  return arr.reduce((flat, item) => {\n    return flat.concat(Array.isArray(item) ? flatten(item) : item);\n  }, []);\n}\n```\n\n**Usage:**\n```javascript\nconst nested = [1, [2, 3, [4, 5, [6, 7]]]];\nconsole.log(flatten(nested)); // [1, 2, 3, 4, 5, 6, 7]\n```\n\n**Alternative approaches:**\n\n1. **Using the built-in `flat()` method** (modern, simple):\n```javascript\nconst nested = [1, [2, 3, [4, 5, [6, 7]]]];\nconsole.log(nested.flat(Infinity)); // [1, 2, 3, 4, 5, 6, 7]\n```\n\n2. **Recursive approach** (more explicit):\n```javascript\nfunction flatten(arr) {\n  const result = [];\n  for (const item of arr) {\n    if (Array.isArray(item)) {\n      result.push(...flatten(item));\n    } else {\n      result.push(item);\n    }\n  }\n  return result;\n}\n```\n\n3. **Using `flat()` with a depth parameter** (if you want to limit flattening depth):\n```javascript\nconst nested = [1, [2, 3, [4, 5]]];\nconsole.log(nested.flat(2)); // Flattens 2 levels deep\n```\n\nThe `reduce` version is concise and efficient. Use `flat(Infinity)` if you prefer the built-in method, which is cleaner for modern JavaScript environments.",
+      "sampleOn": "```javascript\n// Using built-in flat()\nfunction flatten(arr) {\n  return arr.flat(Infinity);\n}\n\n// Recursive approach (works in older environments)\nfunction flatten(arr) {\n  return arr.reduce((flat, item) => {\n    return flat.concat(Array.isArray(item) ? flatten(item) : item);\n  }, []);\n}\n\n// Iterative approach with stack\nfunction flatten(arr) {\n  const stack = [...arr];\n  const flat = [];\n  \n  while (stack.length) {\n    const item = stack.pop();\n    if (Array.isArray(item)) {\n      stack.push(...item);\n    } else {\n      flat.unshift(item);\n    }\n  }\n  return flat;\n}\n```\n\n**Pick one:**\n- **Built-in** — simplest, modern (ES2019+)\n- **Recursive** — clear, works everywhere\n- **Iterative** — avoids call stack overflow on huge nesting depths\n\nAll handle arbitrary nesting depth. Recursive is most readable for typical use."
+    },
+    {
+      "id": "code-config",
+      "kind": "code",
+      "offTokMean": 835.6666666666666,
+      "onTokMean": 686,
+      "saved": 0.17909852413242922,
+      "offLocMean": 31.333333333333332,
+      "onLocMean": 20.666666666666668,
+      "offToks": [
+        1003,
+        632,
+        872
+      ],
+      "onToks": [
+        295,
+        866,
+        897
+      ],
+      "offLocs": [
+        35,
+        31,
+        28
+      ],
+      "onLocs": [
+        12,
+        25,
+        25
+      ],
+      "sampleOff": "Here's a Node.js function that loads a JSON config file with fallback handling:\n\n```javascript\nconst fs = require('fs').promises;\n\nasync function loadConfig(filePath) {\n  try {\n    const content = await fs.readFile(filePath, 'utf-8');\n    return JSON.parse(content);\n  } catch (error) {\n    // Return empty object if file doesn't exist\n    if (error.code === 'ENOENT') {\n      return {};\n    }\n    // Also return empty object for JSON parse errors\n    console.error(`Error loading config from ${filePath}:`, error.message);\n    return {};\n  }\n}\n\n// Usage\nloadConfig('./config.json').then(config => {\n  console.log(config);\n});\n```\n\nIf you prefer a synchronous version:\n\n```javascript\nconst fs = require('fs');\n\nfunction loadConfig(filePath) {\n  try {\n    const content = fs.readFileSync(filePath, 'utf-8');\n    return JSON.parse(content);\n  } catch (error) {\n    if (error.code === 'ENOENT') {\n      return {};\n    }\n    console.error(`Error loading config from ${filePath}:`, error.message);\n    return {};\n  }\n}\n\n// Usage\nconst config = loadConfig('./config.json');\nconsole.log(config);\n```\n\nBoth versions:\n- Catch missing files (`ENOENT` error) and return `{}`\n- Also handle JSON parsing errors gracefully\n- Log errors for debugging (optional - remove if you prefer silent failures)\n- Return an empty object as the fallback in all error cases\n\nChoose async if you're in an async context or modern application, synchronous if you're loading config during startup where blocking is acceptable.",
+      "sampleOn": "```javascript\nimport { readFileSync } from 'fs';\n\nfunction loadConfig(filePath) {\n  try {\n    const data = readFileSync(filePath, 'utf-8');\n    return JSON.parse(data);\n  } catch {\n    return {};\n  }\n}\n\nexport default loadConfig;\n```\n\n**Usage:**\n```javascript\nconst config = loadConfig('./config.json');\nconsole.log(config); // parsed object or {} if missing/invalid\n```\n\nCatches all errors (missing file, invalid JSON, permission issues) and returns empty object. Uses `readFileSync` for synchronous reading; if you need async, switch to `readFile` with a promise/callback."
+    },
+    {
+      "id": "explain-closure",
+      "kind": "explain",
+      "offTokMean": 587.3333333333334,
+      "onTokMean": 537.6666666666666,
+      "saved": 0.08456299659477884,
+      "offLocMean": 0,
+      "onLocMean": 0,
+      "offToks": [
+        593,
+        568,
+        601
+      ],
+      "onToks": [
+        470,
+        561,
+        582
+      ],
+      "offLocs": [],
+      "onLocs": [],
+      "sampleOff": "A **closure** is a function that has access to variables from its outer (enclosing) scope even after that scope has finished executing. In JavaScript, every function creates a closure.\n\n## How it works\n\nWhen a function is defined, it maintains a reference to its lexical scope. This means inner functions can access variables from their parent function:\n\n```javascript\nfunction outer() {\n  const message = \"Hello\";\n  \n  function inner() {\n    console.log(message); // inner accesses message from outer\n  }\n  \n  return inner;\n}\n\nconst greet = outer();\ngreet(); // \"Hello\" — closure keeps message accessible\n```\n\nEven after `outer()` finishes executing, the returned `inner` function still has access to `message`.\n\n## Common use cases\n\n**Data privacy / encapsulation**\n```javascript\nfunction createCounter() {\n  let count = 0; // private variable\n  \n  return {\n    increment: () => ++count,\n    getCount: () => count\n  };\n}\n\nconst counter = createCounter();\ncounter.increment(); // 1\n// count is not directly accessible from outside\n```\n\n**Function factories**\n```javascript\nfunction makeMultiplier(factor) {\n  return (number) => number * factor;\n}\n\nconst double = makeMultiplier(2);\nconst triple = makeMultiplier(3);\n\ndouble(5); // 10\ntriple(5); // 15\n```\n\n**Event handlers with context**\n```javascript\nfunction setupButton(buttonId, label) {\n  const button = document.getElementById(buttonId);\n  button.addEventListener('click', () => {\n    console.log(`${label} clicked`); // closure captures label\n  });\n}\n```\n\n**Callbacks and async operations**\n```javascript\nfunction fetchUser(userId) {\n  fetch(`/api/users/${userId}`)\n    .then(res => res.json())\n    .then(data => {\n      // closure captures userId in the callback\n      console.log(`User ${userId}:`, data);\n    });\n}\n```\n\nClosures are fundamental to JavaScript and used everywhere—they're not something to avoid, but rather a powerful feature to leverage for organizing code and managing state.",
+      "sampleOn": "A closure happens when a function accesses variables from an outer function's scope, even after that outer function has finished executing. Inner function \"closes over\" outer variables.\n\n```javascript\nfunction makeCounter() {\n  let count = 0;\n  return function() {\n    return ++count;\n  };\n}\n\nconst counter = makeCounter();\nconsole.log(counter()); // 1\nconsole.log(counter()); // 2\n```\n\nThe returned function still has access to `count` even though `makeCounter()` finished executing. That's the closure.\n\n**When to use:**\n\n1. **Data privacy** — Hide variables that shouldn't be accessed directly:\n```javascript\nconst user = (() => {\n  let email = 'secret@example.com';\n  return {\n    getEmail: () => email,\n    setEmail: (newEmail) => { email = newEmail; }\n  };\n})();\n```\n\n2. **Factory functions** — Create multiple instances with private state (like the counter example above).\n\n3. **Callbacks with context** — Preserve values for event handlers or async operations:\n```javascript\nfunction setupButtons(names) {\n  names.forEach(name => {\n    const btn = document.createElement('button');\n    btn.textContent = name;\n    btn.addEventListener('click', () => {\n      alert(`${name} clicked`);\n    });\n  });\n}\n```\n\n4. **Module pattern** — Bundle related functions with shared state without polluting global scope.\n\nClosures are fundamental to JavaScript. Every function creates a closure over its outer scope, so you're using them constantly—even if you don't call it that."
+    },
+    {
+      "id": "explain-index",
+      "kind": "explain",
+      "offTokMean": 578.3333333333334,
+      "onTokMean": 457,
+      "saved": 0.20979827089337177,
+      "offLocMean": 0,
+      "onLocMean": 0,
+      "offToks": [
+        574,
+        583,
+        578
+      ],
+      "onToks": [
+        385,
+        530,
+        456
+      ],
+      "offLocs": [],
+      "onLocs": [],
+      "sampleOff": "# Database Index\n\n## What It Is\n\nA database index is a data structure that improves the speed of data retrieval operations on a table. It works like an index in a book—instead of reading every page to find a topic, you look it up in the index to find the relevant page numbers.\n\nWhen you create an index on a column (or set of columns), the database stores a sorted, optimized structure that maps values to the row locations containing those values. This allows queries to find matching rows much faster than scanning the entire table.\n\n## How It Works\n\nWithout an index on a column, a query like `SELECT * FROM users WHERE email = 'john@example.com'` requires a **full table scan**—checking every single row.\n\nWith an index on the `email` column, the database can use binary search or tree traversal to locate matching rows in logarithmic time instead of linear time.\n\n## The Trade-offs\n\n**Benefits:**\n- **Faster SELECT queries** - Dramatically speeds up WHERE clauses, JOINs, and ORDER BY operations\n- **Faster filtering** - Reduces disk I/O and CPU usage for read operations\n- **Better JOIN performance** - Indexes on foreign keys speed up joins\n\n**Costs:**\n- **Slower INSERT/UPDATE/DELETE** - Every write operation must also update the index, adding overhead\n- **Additional disk space** - Indexes require storage (sometimes significant for large tables with multiple indexes)\n- **Index maintenance** - The database must keep the index sorted and optimized as data changes\n- **Query planning complexity** - The query optimizer must decide when to use indexes, which can sometimes choose poorly\n\n## When to Use\n\nAdd an index when:\n- The column is frequently used in WHERE clauses or JOINs\n- The table is large and reads vastly outnumber writes\n- The benefit in query speed justifies the write performance cost\n\nAvoid over-indexing when:\n- The table is small (full scans are already fast)\n- The column is mostly written to and rarely read\n- Disk space is limited\n- Too many indexes slow down the query optimizer's decision-making",
+      "sampleOn": "## Database Index\n\n**What it is:** Data structure (usually B-tree) that maps column values to row locations. Enables database to find rows without scanning entire table.\n\n**Speed trade-off:**\n- Reads faster: O(log n) instead of O(n) for filtered queries\n- Writes slower: insert/update/delete must also update index\n\n**Storage trade-off:**\n- Index consumes disk and memory\n- Larger table = larger index\n\n**When to add:**\n- Column used frequently in WHERE, JOIN, or ORDER BY clauses\n- Query cost outweighs write overhead\n- Table large enough that table scan is slow\n\n**When to skip:**\n- Column rarely queried\n- Table small (full scan already fast)\n- Write-heavy workload with few reads\n- High cardinality columns (near-unique values) yield diminishing returns\n\n**Real cost:** Every write operation pays index maintenance penalty, even if that index helps only a few queries. Index on rarely-used column wastes space and slows writes for no benefit.\n\n**Strategy:** Index high-impact queries first. Measure before/after. Remove unused indexes periodically."
+    }
+  ],
+  "pooledSaved": 0.12982156914195753,
+  "locSaved": 0.42596810933940765,
+  "sumOff": 5081.333333333333,
+  "sumOn": 4421.666666666666,
+  "sumOffLOC": 146.33333333333331,
+  "sumOnLOC": 84,
+  "costUsd": 0.2146164
+}
