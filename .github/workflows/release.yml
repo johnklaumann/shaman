@@ -1,9 +1,11 @@
 name: Release
 
-# Tag vX.Y.Z -> full test gate -> npm publish with provenance -> GitHub Release.
-# npm auth uses Trusted Publishing (OIDC): configure once on npmjs.com
-# (package Settings -> Trusted Publisher -> this repo + this workflow); no
-# NPM_TOKEN secret is ever stored.
+# Tag vX.Y.Z -> full test gate -> GitHub Release.
+# npm publish runs as a separate job that is ALLOWED TO FAIL until npm Trusted
+# Publishing is configured (npmjs.com -> package -> Settings -> Trusted
+# Publisher -> this repo + this workflow). The plugin itself distributes from
+# this GitHub repo (Claude Code / Codex marketplaces, npx github:) — npm is the
+# optional short-command channel.
 on:
   push:
     tags: ['v*']
@@ -13,14 +15,13 @@ permissions:
   id-token: write
 
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22.x
-          registry-url: https://registry.npmjs.org
       - run: npm test
       - run: node scripts/build-adapters.mjs --check
       - run: node scripts/check-versions.mjs
@@ -30,11 +31,22 @@ jobs:
           PKG=$(node -p "require('./package.json').version")
           TAG=${GITHUB_REF_NAME#v}
           if [ "$PKG" != "$TAG" ]; then echo "tag v$TAG != package.json $PKG"; exit 1; fi
-      - run: npm publish --provenance --access public
       - name: GitHub Release with changelog notes
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
             --title "shaman $GITHUB_REF_NAME" \
-            --notes "See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/main/CHANGELOG.md) for details. Install: \`claude plugin install shaman@shaman\` or \`npx shaman-ai init\`."
+            --notes "See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/main/CHANGELOG.md) for details. Install: \`claude plugin marketplace add johnklaumann/shaman\` then \`claude plugin install shaman@shaman\` — or \`npx github:johnklaumann/shaman init\` for other tools."
+
+  npm-publish:
+    needs: release
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          registry-url: https://registry.npmjs.org
+      - run: npm publish --provenance --access public

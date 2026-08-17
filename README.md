@@ -1,7 +1,6 @@
 # shaman
 
 [![CI](https://github.com/johnklaumann/shaman/actions/workflows/ci.yml/badge.svg)](https://github.com/johnklaumann/shaman/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/shaman-ai)](https://www.npmjs.com/package/shaman-ai)
 [![zero deps](https://img.shields.io/badge/dependencies-0-brightgreen)](package.json)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
@@ -20,7 +19,7 @@ Most engineers don't have a token problem. They have a prompt problem that prese
 ## The score
 
 ```
-$ npx shaman-ai score "fix it"
+$ npx github:johnklaumann/shaman score "fix it"
 score 20/100 · weak — would be blocked in coach mode
 
   target     ░░░░░░  0/30   name a file, function, or paste the error text
@@ -29,7 +28,7 @@ score 20/100 · weak — would be blocked in coach mode
   context    ░░░░░░  0/15   describe current vs expected behavior
   detail     ░░░░░░  0/15   add specifics: numbers, names, exact messages
 
-$ npx shaman-ai score "Fix token expiry in auth/middleware.ts — expired tokens still pass. Must reject with 401."
+$ npx github:johnklaumann/shaman score "Fix token expiry in auth/middleware.ts — expired tokens still pass. Must reject with 401."
 score 93/100 · strong — passes silently
 ```
 
@@ -54,7 +53,7 @@ codex plugin add shaman@shaman
 **Any other tool / any model** (Cursor, Copilot, Windsurf, Cline, Kiro, Qoder, Gemini CLI, Roo — static ruleset, generated into your repo):
 
 ```
-npx shaman-ai init
+npx github:johnklaumann/shaman init
 ```
 
 Requires Node.js ≥ 18. Zero dependencies.
@@ -70,7 +69,7 @@ Requires Node.js ≥ 18. Zero dependencies.
 | `/shaman-init` | Generate rule files for 8 other tools in the current repo. |
 | `/shaman-help` | Quick reference card. |
 
-CLI twins for any environment: `npx shaman-ai score "..."` (exit 2 on weak — scriptable), `npx shaman-ai init`, `npx shaman-ai bench`.
+CLI twins for any environment: `npx github:johnklaumann/shaman score "..."` (exit 2 on weak — scriptable), `npx github:johnklaumann/shaman init`, `npx github:johnklaumann/shaman bench`.
 
 ## The prompt gate
 
@@ -198,7 +197,7 @@ Limits: small fixture app (5 files), 6 tickets, n=2, one model — the shape of 
 
 ## Other tools
 
-`/shaman-init` (or `npx shaman-ai init`) generates rule files for:
+`/shaman-init` (or `npx github:johnklaumann/shaman init`) generates rule files for:
 
 | Tool | File |
 |------|------|
@@ -211,7 +210,7 @@ Limits: small fixture app (5 files), 6 tickets, n=2, one model — the shape of 
 | Qoder | `.qoder/rules/shaman.md` |
 | Roo / generic | `.agents/rules/shaman.md` |
 
-All eight are **generated from `rules/core.md`** by `src/lib/adapters.js` — one canonical ruleset, no hand-synced copies, and CI fails if the committed adapters drift from the source. The gate, scoring, and per-session benchmarks need hooks: Claude Code and Codex get them via the plugin; everything else gets the static ruleset plus `npx shaman-ai score` for manual gating.
+All eight are **generated from `rules/core.md`** by `src/lib/adapters.js` — one canonical ruleset, no hand-synced copies, and CI fails if the committed adapters drift from the source. The gate, scoring, and per-session benchmarks need hooks: Claude Code and Codex get them via the plugin; everything else gets the static ruleset plus `npx github:johnklaumann/shaman score` for manual gating.
 
 ## Design principles (dogfooded)
 
