@@ -1,6 +1,10 @@
 name: Release
 
 # Tag vX.Y.Z -> full test gate -> GitHub Release.
+# REQUIRES: Settings -> Actions -> General -> Workflow permissions ->
+# "Read and write permissions". On a fresh repo the default GITHUB_TOKEN is
+# read-only, which caps the `contents: write` below and makes `gh release
+# create` return HTTP 403.
 # npm publish runs as a separate job that is ALLOWED TO FAIL until npm Trusted
 # Publishing is configured (npmjs.com -> package -> Settings -> Trusted
 # Publisher -> this repo + this workflow). The plugin itself distributes from
@@ -35,9 +39,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" \
-            --title "shaman $GITHUB_REF_NAME" \
-            --notes "See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/main/CHANGELOG.md) for details. Install: \`claude plugin marketplace add johnklaumann/shaman\` then \`claude plugin install shaman@shaman\` — or \`npx github:johnklaumann/shaman init\` for other tools."
+          NOTES="See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/main/CHANGELOG.md) for details. Install: \`claude plugin marketplace add johnklaumann/shaman\` then \`claude plugin install shaman@shaman\` — or \`npx github:johnklaumann/shaman init\` for other tools."
+          # Idempotent: create the release, or update it if a re-run/re-tag already made one.
+          gh release create "$GITHUB_REF_NAME" --title "shaman $GITHUB_REF_NAME" --notes "$NOTES" \
+            || gh release edit "$GITHUB_REF_NAME" --title "shaman $GITHUB_REF_NAME" --notes "$NOTES"
 
   npm-publish:
     needs: release
