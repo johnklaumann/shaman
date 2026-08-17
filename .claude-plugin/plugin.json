@@ -1,6 +1,5 @@
 {
   "name": "shaman",
-  "displayName": "Shaman",
   "version": "0.2.0",
   "description": "Tribe elder for your AI agent: terse talk, minimal code, best practices — and a prompt gate that scores every prompt 0-100 before it burns tokens.",
   "author": {
