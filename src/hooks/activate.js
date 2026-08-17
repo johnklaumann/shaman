@@ -6,12 +6,15 @@
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
-const { loadState, writeState, pruneSessions, readStdin } = require('../lib/state');
+const { loadState, writeState, pruneSessions, effectiveMode, readStdin } = require('../lib/state');
 
 try {
   const input = readStdin();
   const { state, corrupt } = loadState();
   const isSubagent = input.hook_event_name === 'SubagentStart';
+  // 'ab' resolves to full/off by day parity; the session is stamped with the
+  // effective arm so /shaman-bench attributes it correctly with no user effort.
+  const mode = effectiveMode(state.mode);
 
   // Record the mode this session starts under, so bench snapshots stay accurate
   // even if the global mode changes later from another window. Skip the write if
@@ -20,19 +23,19 @@ try {
   if (!corrupt && !isSubagent) {
     const sessions = pruneSessions(state.sessions);
     if (input.session_id && !sessions[input.session_id]) {
-      sessions[input.session_id] = { mode: state.mode, gate: state.gate, ts: Date.now() };
+      sessions[input.session_id] = { mode, gate: state.gate, ts: Date.now() };
     }
     writeState({ ...state, sessions });
   }
 
-  if (state.mode === 'off') process.exit(0);
+  if (mode === 'off') process.exit(0);
 
   let rules = fs.readFileSync(path.join(__dirname, '..', '..', 'rules', 'core.md'), 'utf8');
 
-  if (state.mode === 'lite') {
+  if (mode === 'lite') {
     // lite keeps articles and full sentences; only filler dies.
     rules = rules.replace(/^- Drop articles.*\r?\n/m, '');
-  } else if (state.mode === 'ultra') {
+  } else if (mode === 'ultra') {
     rules = rules.replace(
       /^(- Drop articles.*)$/m,
       '$1\n- One word when one word enough. Strip conjunctions.'
@@ -41,7 +44,7 @@ try {
 
   rules = rules.replace(
     /^# SHAMAN ACTIVE$/m,
-    `# SHAMAN ACTIVE — level: ${state.mode}, gate: ${state.gate}`
+    `# SHAMAN ACTIVE — level: ${mode}${state.mode === 'ab' ? ' (ab)' : ''}, gate: ${state.gate}`
   );
 
   process.stdout.write(rules);

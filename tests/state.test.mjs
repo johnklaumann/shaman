@@ -47,6 +47,16 @@ test('writeState then loadState round-trips', () => {
   });
 });
 
+test('effectiveMode: ab alternates by day parity, other modes pass through', () => {
+  withTempConfig(({ effectiveMode }) => {
+    assert.equal(effectiveMode('ab', new Date(2026, 7, 17)), 'full');  // 17th, odd
+    assert.equal(effectiveMode('ab', new Date(2026, 7, 18)), 'off');   // 18th, even
+    assert.equal(effectiveMode('full', new Date(2026, 7, 18)), 'full');
+    assert.equal(effectiveMode('off', new Date(2026, 7, 17)), 'off');
+    assert.equal(effectiveMode('ultra', new Date(2026, 7, 18)), 'ultra');
+  });
+});
+
 test('pruneSessions drops entries older than the TTL and keeps fresh ones', () => {
   withTempConfig(({ pruneSessions }) => {
     const out = pruneSessions({

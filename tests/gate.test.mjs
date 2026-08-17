@@ -88,6 +88,21 @@ test('mid-session mode switch marks the session mixed for bench honesty', () => 
   fs.rmSync(cfg, { recursive: true, force: true });
 });
 
+test('ab mode command persists; on an off-day the gate stays silent', () => {
+  const cfg = makeConfig();
+  assert.equal(runGate(cfg, '/shaman ab').status, 0);
+  const state = JSON.parse(fs.readFileSync(path.join(cfg, 'shaman', 'state.json'), 'utf8'));
+  assert.equal(state.mode, 'ab');
+  const r = runGate(cfg, 'fix it', 's-ab');
+  if (new Date().getDate() % 2 === 0) {
+    assert.equal(r.status, 0);
+    assert.equal(r.stdout, '', 'off-day: no enrichment, vanilla arm stays clean');
+  } else {
+    assert.equal(r.status, 2, 'on-day: coach still blocks');
+  }
+  fs.rmSync(cfg, { recursive: true, force: true });
+});
+
 test('questions are never blocked even in coach mode', () => {
   const cfg = makeConfig();
   const r = runGate(cfg, 'why does test_login fail?');

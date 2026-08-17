@@ -13,7 +13,7 @@
 // UserPromptSubmit cannot rewrite the prompt (per Claude Code docs) — it can only
 // block or inject context alongside it. Both are enough.
 'use strict';
-const { loadState, writeState, pruneSessions, readStdin } = require('../lib/state');
+const { loadState, writeState, pruneSessions, effectiveMode, readStdin } = require('../lib/state');
 const { score, renderCard, QUESTION } = require('../lib/score');
 
 const COOLDOWN_MS = 3 * 60 * 1000;
@@ -43,7 +43,7 @@ try {
   // Mode switches typed as slash commands: persist here so the change survives
   // even before the command's markdown runs. A mid-session mode change marks the
   // session 'mixed' so bench comparisons exclude it.
-  const modeCmd = prompt.match(/^\/(?:shaman:)?shaman\s+(lite|full|ultra|off)\b/i);
+  const modeCmd = prompt.match(/^\/(?:shaman:)?shaman\s+(lite|full|ultra|ab|off)\b/i);
   const gateCmd = prompt.match(/^\/(?:shaman:)?shaman-gate\s+(coach|enrich|off)\b/i);
   if (modeCmd || gateCmd) {
     const sessions = pruneSessions(state.sessions);
@@ -61,6 +61,9 @@ try {
   }
 
   if (state.gate === 'off') process.exit(0);
+  // ab off-day: the whole plugin is off — no enrichment either, or the
+  // "vanilla" arm of the A/B would be contaminated by injected context.
+  if (state.mode === 'ab' && effectiveMode(state.mode) === 'off') process.exit(0);
   if (prompt.startsWith('/')) process.exit(0); // never gate slash commands
 
   const r = score(prompt);

@@ -4,6 +4,14 @@ All notable changes to shaman. Format follows [Keep a Changelog](https://keepach
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-08-17
+
+### Added
+- `/shaman ab` — self-measuring A/B mode: the plugin alternates whole-plugin on/off by calendar-day parity (gate included on off-days) and stamps each session with the arm it ran under, so `/shaman-bench` accumulates an honest personal on-vs-off comparison from normal work, zero discipline required
+
+### Fixed
+- Removed invalid `displayName` key from the Claude plugin manifest (broke `claude plugin install`)
+
 ## [0.2.0] - 2026-08-17
 
 The "prove it" release: prompt scoring, any-tool support, and benchmarks with teeth.
@@ -29,6 +37,7 @@ The "prove it" release: prompt scoring, any-tool support, and benchmarks with te
 
 Initial release: terse talk (caveman DNA), decision ladder (ponytail DNA), prompt gate (coach/enrich), per-session token benchmarks, static rule files for Cursor/Codex/Copilot.
 
-[Unreleased]: https://github.com/johnklaumann/shaman/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/johnklaumann/shaman/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/johnklaumann/shaman/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/johnklaumann/shaman/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/johnklaumann/shaman/releases/tag/v0.1.0

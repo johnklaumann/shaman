@@ -51,6 +51,17 @@ test('session start records the session mode for bench attribution', () => {
   assert.equal(r.after.sessions['act-test'].mode, 'full');
 });
 
+test('ab mode: today resolves to one arm, injection and session stamp agree', () => {
+  const expected = new Date().getDate() % 2 === 1 ? 'full' : 'off';
+  const r = run({ mode: 'ab', gate: 'enrich' });
+  if (expected === 'off') {
+    assert.equal(r.stdout, '', 'even day must inject nothing');
+  } else {
+    assert.match(r.stdout, /SHAMAN ACTIVE — level: full \(ab\)/);
+  }
+  assert.equal(r.after.sessions['act-test'].mode, expected, 'session stamped with effective arm, never "ab"');
+});
+
 test('subagent start injects rules but skips session bookkeeping', () => {
   const r = run({ mode: 'full', gate: 'enrich' }, { hook_event_name: 'SubagentStart', session_id: 'sub-1' });
   assert.match(r.stdout, /SHAMAN ACTIVE/);

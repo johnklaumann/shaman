@@ -10,6 +10,12 @@ and what it costs. Checked items are done and verifiable in this repo.
 - [ ] Community corpus growth: accept PRs adding labeled prompts; CI keeps 0-false-blocks invariant
 - [ ] Spanish verb/constraint lexicons (structure already supports it) — v0.3
 
+## UX
+
+- [ ] Statusline: show `shaman full · gate enrich` permanently in the Claude Code status
+      bar (~20-line script + statusLine setting, reading state.json — caveman and ponytail
+      both ship one). Removes the "is it on?" doubt entirely — v0.3
+
 ## Tier 2 — single-shot token savings (moderate → high)
 
 - [x] Tiered, correctness-gated live A/B (14 tasks, 3 tiers, adversarial asserts, self-tested gates)

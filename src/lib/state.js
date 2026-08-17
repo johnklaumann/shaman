@@ -52,6 +52,17 @@ function pruneSessions(sessions) {
   return out;
 }
 
+// mode 'ab' = self-measuring A/B: the plugin alternates by calendar-day parity
+// (odd day of month -> 'full', even -> 'off'), so on/off sessions accumulate
+// automatically with zero user discipline. Sessions are stamped with the
+// EFFECTIVE mode at SessionStart, so bench attribution is per-arm, never 'ab'.
+// Known wrinkle: a 31st followed by a 1st gives two consecutive on-days —
+// harmless at two-week scale.
+function effectiveMode(mode, date = new Date()) {
+  if (mode !== 'ab') return mode;
+  return date.getDate() % 2 === 1 ? 'full' : 'off';
+}
+
 function readStdin() {
   try {
     return JSON.parse(fs.readFileSync(0, 'utf8'));
@@ -60,4 +71,4 @@ function readStdin() {
   }
 }
 
-module.exports = { DEFAULTS, configDir, shamanDir, statePath, benchPath, loadState, writeState, pruneSessions, readStdin };
+module.exports = { DEFAULTS, configDir, shamanDir, statePath, benchPath, loadState, writeState, pruneSessions, effectiveMode, readStdin };

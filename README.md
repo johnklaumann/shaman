@@ -62,7 +62,7 @@ Requires Node.js ≥ 18. Zero dependencies.
 
 | Command | What it does |
 |---------|--------------|
-| `/shaman [lite\|full\|ultra\|off]` | Talk level. `full` (default) drops articles, allows fragments. `lite` keeps full sentences. `ultra` — one word when one word enough. |
+| `/shaman [lite\|full\|ultra\|ab\|off]` | Talk level. `full` (default) drops articles, allows fragments. `lite` keeps full sentences. `ultra` — one word when one word enough. `ab` — self-measuring A/B: alternates whole-plugin on/off by calendar-day parity and auto-stamps each session's arm, so `/shaman-bench` builds your own on-vs-off numbers from normal work. |
 | `/shaman-gate [coach\|enrich\|off]` | Prompt gate. `coach` blocks weak prompts (score < 20) before they burn tokens. `enrich` (default) lets them pass but injects the score + forces stated assumptions + max one clarifying question. |
 | `/shaman-score <prompt>` | Score a prompt 0–100 with the dimension breakdown, without sending it. |
 | `/shaman-bench` | Token stats per session, split by mode — your own numbers, on vs off. |

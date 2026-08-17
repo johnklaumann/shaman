@@ -11,7 +11,7 @@
 // treat numbers as estimates, /usage is the source of truth.
 'use strict';
 const fs = require('node:fs');
-const { loadState, benchPath, shamanDir, readStdin } = require('../lib/state');
+const { loadState, benchPath, shamanDir, effectiveMode, readStdin } = require('../lib/state');
 
 try {
   const input = readStdin();
@@ -46,7 +46,7 @@ try {
   const record = {
     ts: new Date().toISOString(),
     session: input.session_id || null,
-    mode: session ? session.mode : state.mode,
+    mode: session ? session.mode : effectiveMode(state.mode),
     gate: session ? session.gate : state.gate,
     requests: seen.size,
     userTurns,

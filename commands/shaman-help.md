@@ -7,10 +7,11 @@ Show this quick reference, verbatim, then stop:
 ```
 SHAMAN — terse talk, minimal code, scored prompts
 
-/shaman [lite|full|ultra|off]      talk level (default: full)
+/shaman [lite|full|ultra|ab|off]   talk level (default: full)
   lite   drop filler, keep full sentences
   full   drop articles, fragments OK
   ultra  one word when one word enough
+  ab     self-measuring A/B: odd days on, even days off, auto-stamped
 
 /shaman-gate [coach|enrich|off]    prompt gate (default: enrich)
   coach  block weak prompts (score < 20) before they burn tokens
