@@ -1,0 +1,559 @@
+{
+  "model": "claude-haiku-4-5",
+  "trials": 2,
+  "rows": [
+    {
+      "id": "bugfix-month",
+      "off": {
+        "done": 1,
+        "cost": 0.05626427500000001,
+        "output": 2538,
+        "total": 18038.5,
+        "cacheRead": 220021.5,
+        "ms": 53919.5,
+        "turns": 15.5,
+        "added": 1
+      },
+      "on": {
+        "done": 1,
+        "cost": 0.04950715000000001,
+        "output": 2244.5,
+        "total": 17315.5,
+        "cacheRead": 177284,
+        "ms": 50236.5,
+        "turns": 12.5,
+        "added": 1
+      },
+      "cells": {
+        "off": [
+          {
+            "trial": 1,
+            "ms": 54215,
+            "turns": 15,
+            "cost": 0.06359900000000002,
+            "input": 306,
+            "output": 2705,
+            "cacheCreate": 22676,
+            "cacheRead": 200350,
+            "added": 1,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          },
+          {
+            "trial": 2,
+            "ms": 53624,
+            "turns": 16,
+            "cost": 0.04892955,
+            "input": 98,
+            "output": 2371,
+            "cacheCreate": 7921,
+            "cacheRead": 239693,
+            "added": 1,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          }
+        ],
+        "on": [
+          {
+            "trial": 1,
+            "ms": 50587,
+            "turns": 13,
+            "cost": 0.05899795000000001,
+            "input": 822,
+            "output": 2320,
+            "cacheCreate": 22657,
+            "cacheRead": 159377,
+            "added": 1,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          },
+          {
+            "trial": 2,
+            "ms": 49886,
+            "turns": 12,
+            "cost": 0.040016350000000006,
+            "input": 82,
+            "output": 2169,
+            "cacheCreate": 6581,
+            "cacheRead": 195191,
+            "added": 1,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "feat-delete",
+      "off": {
+        "done": 1,
+        "cost": 0.08438537500000001,
+        "output": 4808.5,
+        "total": 18056.5,
+        "cacheRead": 399562.5,
+        "ms": 86407.5,
+        "turns": 24,
+        "added": 16.5
+      },
+      "on": {
+        "done": 1,
+        "cost": 0.051615225,
+        "output": 3248,
+        "total": 12545,
+        "cacheRead": 228526,
+        "ms": 59760,
+        "turns": 15.5,
+        "added": 15
+      },
+      "cells": {
+        "off": [
+          {
+            "trial": 1,
+            "ms": 95334,
+            "turns": 27,
+            "cost": 0.09684675000000004,
+            "input": 170,
+            "output": 5216,
+            "cacheCreate": 14387,
+            "cacheRead": 479650,
+            "added": 17,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          },
+          {
+            "trial": 2,
+            "ms": 77481,
+            "turns": 21,
+            "cost": 0.071924,
+            "input": 553,
+            "output": 4401,
+            "cacheCreate": 11386,
+            "cacheRead": 319475,
+            "added": 16,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          }
+        ],
+        "on": [
+          {
+            "trial": 1,
+            "ms": 57087,
+            "turns": 14,
+            "cost": 0.049603150000000006,
+            "input": 82,
+            "output": 3152,
+            "cacheCreate": 9681,
+            "cacheRead": 204789,
+            "added": 14,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          },
+          {
+            "trial": 2,
+            "ms": 62433,
+            "turns": 17,
+            "cost": 0.0536273,
+            "input": 131,
+            "output": 3344,
+            "cacheCreate": 8700,
+            "cacheRead": 252263,
+            "added": 16,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "feat-search",
+      "off": {
+        "done": 1,
+        "cost": 0.0734936,
+        "output": 4370,
+        "total": 16542.5,
+        "cacheRead": 330983.5,
+        "ms": 79402.5,
+        "turns": 20,
+        "added": 7
+      },
+      "on": {
+        "done": 1,
+        "cost": 0.059325024999999997,
+        "output": 3564,
+        "total": 13622.5,
+        "cacheRead": 275759,
+        "ms": 65912,
+        "turns": 17,
+        "added": 7
+      },
+      "cells": {
+        "off": [
+          {
+            "trial": 1,
+            "ms": 104223,
+            "turns": 27,
+            "cost": 0.1035123,
+            "input": 377,
+            "output": 6463,
+            "cacheCreate": 16266,
+            "cacheRead": 466928,
+            "added": 7,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          },
+          {
+            "trial": 2,
+            "ms": 54582,
+            "turns": 13,
+            "cost": 0.043474900000000004,
+            "input": 82,
+            "output": 2277,
+            "cacheCreate": 7620,
+            "cacheRead": 195039,
+            "added": 7,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          }
+        ],
+        "on": [
+          {
+            "trial": 1,
+            "ms": 58935,
+            "turns": 16,
+            "cost": 0.05262685,
+            "input": 106,
+            "output": 2456,
+            "cacheCreate": 8747,
+            "cacheRead": 270221,
+            "added": 7,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          },
+          {
+            "trial": 2,
+            "ms": 72889,
+            "turns": 18,
+            "cost": 0.06602319999999999,
+            "input": 886,
+            "output": 4672,
+            "cacheCreate": 10378,
+            "cacheRead": 281297,
+            "added": 7,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "valid-limits",
+      "off": {
+        "done": 1,
+        "cost": 0.08148035,
+        "output": 4239.5,
+        "total": 15491,
+        "cacheRead": 404901,
+        "ms": 167583,
+        "turns": 23,
+        "added": 2.5
+      },
+      "on": {
+        "done": 1,
+        "cost": 0.085911125,
+        "output": 3864.5,
+        "total": 15376,
+        "cacheRead": 449035,
+        "ms": 90657,
+        "turns": 26,
+        "added": 2
+      },
+      "cells": {
+        "off": [
+          {
+            "trial": 1,
+            "ms": 275332,
+            "turns": 30,
+            "cost": 0.11478120000000001,
+            "input": 202,
+            "output": 5443,
+            "cacheCreate": 14102,
+            "cacheRead": 588197,
+            "added": 2,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          },
+          {
+            "trial": 2,
+            "ms": 59834,
+            "turns": 16,
+            "cost": 0.0481795,
+            "input": 339,
+            "output": 3036,
+            "cacheCreate": 7860,
+            "cacheRead": 221605,
+            "added": 3,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          }
+        ],
+        "on": [
+          {
+            "trial": 1,
+            "ms": 129826,
+            "turns": 35,
+            "cost": 0.12570720000000002,
+            "input": 218,
+            "output": 5348,
+            "cacheCreate": 15108,
+            "cacheRead": 657982,
+            "added": 2,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          },
+          {
+            "trial": 2,
+            "ms": 51488,
+            "turns": 17,
+            "cost": 0.046115050000000005,
+            "input": 244,
+            "output": 2381,
+            "cacheCreate": 7453,
+            "cacheRead": 240088,
+            "added": 2,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "feat-stats",
+      "off": {
+        "done": 1,
+        "cost": 0.0635297,
+        "output": 3714,
+        "total": 13471,
+        "cacheRead": 291834.5,
+        "ms": 70541,
+        "turns": 16.5,
+        "added": 4
+      },
+      "on": {
+        "done": 1,
+        "cost": 0.0421426,
+        "output": 1781.5,
+        "total": 9941.5,
+        "cacheRead": 208171,
+        "ms": 46486,
+        "turns": 12,
+        "added": 4
+      },
+      "cells": {
+        "off": [
+          {
+            "trial": 1,
+            "ms": 74010,
+            "turns": 18,
+            "cost": 0.06964174999999999,
+            "input": 130,
+            "output": 3416,
+            "cacheCreate": 10377,
+            "cacheRead": 339145,
+            "added": 4,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          },
+          {
+            "trial": 2,
+            "ms": 67072,
+            "turns": 15,
+            "cost": 0.05741765,
+            "input": 98,
+            "output": 4012,
+            "cacheCreate": 8909,
+            "cacheRead": 244524,
+            "added": 4,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          }
+        ],
+        "on": [
+          {
+            "trial": 1,
+            "ms": 51828,
+            "turns": 13,
+            "cost": 0.04896085000000001,
+            "input": 106,
+            "output": 1794,
+            "cacheCreate": 8605,
+            "cacheRead": 259246,
+            "added": 4,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          },
+          {
+            "trial": 2,
+            "ms": 41144,
+            "turns": 11,
+            "cost": 0.035324350000000004,
+            "input": 66,
+            "output": 1769,
+            "cacheCreate": 7543,
+            "cacheRead": 157096,
+            "added": 4,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "refactor-dedup",
+      "off": {
+        "done": 1,
+        "cost": 0.06465362499999999,
+        "output": 3531.5,
+        "total": 12783,
+        "cacheRead": 328037.5,
+        "ms": 64722,
+        "turns": 20,
+        "added": 3
+      },
+      "on": {
+        "done": 1,
+        "cost": 0.064061275,
+        "output": 3296.5,
+        "total": 13182,
+        "cacheRead": 325929,
+        "ms": 63468.5,
+        "turns": 20.5,
+        "added": 2
+      },
+      "cells": {
+        "off": [
+          {
+            "trial": 1,
+            "ms": 62481,
+            "turns": 19,
+            "cost": 0.06084199999999999,
+            "input": 122,
+            "output": 3363,
+            "cacheCreate": 8760,
+            "cacheRead": 302940,
+            "added": 4,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          },
+          {
+            "trial": 2,
+            "ms": 66963,
+            "turns": 21,
+            "cost": 0.06846525,
+            "input": 138,
+            "output": 3700,
+            "cacheCreate": 9483,
+            "cacheRead": 353135,
+            "added": 2,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          }
+        ],
+        "on": [
+          {
+            "trial": 1,
+            "ms": 66356,
+            "turns": 20,
+            "cost": 0.06617105,
+            "input": 130,
+            "output": 3546,
+            "cacheCreate": 9713,
+            "cacheRead": 335098,
+            "added": 2,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          },
+          {
+            "trial": 2,
+            "ms": 60581,
+            "turns": 21,
+            "cost": 0.06195150000000001,
+            "input": 122,
+            "output": 3047,
+            "cacheCreate": 9806,
+            "cacheRead": 316760,
+            "added": 2,
+            "testsPass": true,
+            "acceptPass": true,
+            "done": true,
+            "reason": ""
+          }
+        ]
+      }
+    }
+  ],
+  "off": {
+    "done": 1,
+    "cost": 0.423806925,
+    "output": 23201.5,
+    "total": 94382.5,
+    "cacheRead": 1975340.5,
+    "ms": 87095.91666666667,
+    "added": 34
+  },
+  "on": {
+    "done": 1,
+    "cost": 0.35256240000000005,
+    "output": 17999,
+    "total": 81982.5,
+    "cacheRead": 1664704,
+    "ms": 62753.333333333336,
+    "added": 31
+  },
+  "spendUsd": 1.5527386500000002
+}

@@ -6,8 +6,8 @@
   "strongSilent": 1,
   "falseBlocks": 0,
   "legit": 30,
-  "latencyMeanMs": 97.4147807017544,
-  "latencyP95Ms": 129.5725,
+  "latencyMeanMs": 99.77253508771932,
+  "latencyP95Ms": 164.1499,
   "cats": {
     "vague": {
       "block": 16,

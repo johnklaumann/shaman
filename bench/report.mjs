@@ -12,6 +12,25 @@ const gate = res('gate.json');
 const fp = res('footprint.json');
 const compress = res('compress.json');
 const live2 = res('live2.json');
+let agentic = null;
+try { agentic = res('agentic.json'); } catch {}
+
+// Cluster bootstrap over tasks: resample the 14 tasks with replacement, pool
+// off/on token means, 2000 reps -> percentile 95% CI on the savings figure.
+function bootstrapCI(rows, offKey, onKey, reps = 2000) {
+  const stats = [];
+  for (let i = 0; i < reps; i++) {
+    let off = 0, on = 0;
+    for (let k = 0; k < rows.length; k++) {
+      const r = rows[Math.floor(Math.random() * rows.length)];
+      off += r.off[offKey]; on += r.on[onKey];
+    }
+    stats.push(1 - on / off);
+  }
+  stats.sort((a, b) => a - b);
+  return { lo: stats[Math.floor(0.025 * reps)], hi: stats[Math.floor(0.975 * reps)] };
+}
+const tokCI = bootstrapCI(live2.rows, 'tok', 'tok');
 
 const pc = (x) => `${(x * 100).toFixed(1)}%`;
 const pc0 = (x) => `${(x * 100).toFixed(0)}%`;
@@ -71,6 +90,7 @@ ${tierRow('large', live2.tiers.large)}
 | **all** | ${live2.overall.n} | ${live2.overall.offTok.toFixed(0)} → ${live2.overall.onTok.toFixed(0)} | **${saved(live2.overall.offTok, live2.overall.onTok)}** | ${live2.overall.offLoc.toFixed(0)} → ${live2.overall.onLoc.toFixed(0)} | **${saved(live2.overall.offLoc, live2.overall.onLoc)}** | ${pc0(live2.overall.offPass)} / ${pc0(live2.overall.onPass)} | ${(live2.overall.offMs / 1000).toFixed(1)}s → ${(live2.overall.onMs / 1000).toFixed(1)}s |
 
 Comment lines: ${live2.overall.offComments.toFixed(0)} → ${live2.overall.onComments.toFixed(0)}. Run cost: $${live2.costUsd.toFixed(2)}.
+Pooled token savings 95% CI (task-cluster bootstrap, 2000 reps): **[${pc0(tokCI.lo)}, ${pc0(tokCI.hi)}]**.
 
 ### Per task
 
@@ -78,7 +98,30 @@ Comment lines: ${live2.overall.offComments.toFixed(0)} → ${live2.overall.onCom
 |---|---|---|---|---|---|
 ${taskRows}
 
-## Honest limits
+${agentic ? `## 5. Agentic — real multi-turn sessions with tools (${agentic.model}, ${agentic.trials} trials/arm)
+
+Six real tickets against the pinned fixture app (\`bench/fixtures/notes-api\`): sessions run
+with read/edit/bash tools in an isolated workspace (\`--setting-sources project,local\`, own
+git repo, budget-capped). "Done" = fixture test suite green AND the ticket's black-box
+acceptance check passes (checks proven to fail on the pristine fixture, in CI).
+
+| metric | off | on | delta |
+|---|---|---|---|
+| completion | ${pc0(agentic.off.done)} | ${pc0(agentic.on.done)} | ${agentic.on.done >= agentic.off.done ? 'held or improved' : 'REGRESSED'} |
+| session cost (sum) | $${agentic.off.cost.toFixed(3)} | $${agentic.on.cost.toFixed(3)} | ${saved(agentic.off.cost, agentic.on.cost)} saved |
+| output tokens (sum) | ${agentic.off.output.toFixed(0)} | ${agentic.on.output.toFixed(0)} | ${saved(agentic.off.output, agentic.on.output)} |
+| total in+out+cache-write | ${agentic.off.total.toFixed(0)} | ${agentic.on.total.toFixed(0)} | ${saved(agentic.off.total, agentic.on.total)} |
+| cache reads (sum) | ${agentic.off.cacheRead.toFixed(0)} | ${agentic.on.cacheRead.toFixed(0)} | ${saved(agentic.off.cacheRead, agentic.on.cacheRead)} |
+| diff size (sum) | +${agentic.off.added.toFixed(0)} loc | +${agentic.on.added.toFixed(0)} loc | ${saved(agentic.off.added, agentic.on.added)} |
+| mean session time | ${(agentic.off.ms / 1000).toFixed(0)}s | ${(agentic.on.ms / 1000).toFixed(0)}s | — |
+
+| ticket | done off/on | cost off/on | out tok off/on | +loc off/on |
+|---|---|---|---|---|
+${agentic.rows.map((r) => `| ${r.id} | ${pc0(r.off.done)}/${pc0(r.on.done)} | $${r.off.cost.toFixed(3)}/$${r.on.cost.toFixed(3)} | ${r.off.output.toFixed(0)}/${r.on.output.toFixed(0)} | ${r.off.added.toFixed(0)}/${r.on.added.toFixed(0)} |`).join('\n')}
+
+Bench spend: $${agentic.spendUsd.toFixed(2)}.
+
+` : ''}## Honest limits
 
 - One model (${live2.model}), ${live2.trials} trials/arm — directional, not a guarantee. Model output is high-variance; rerun for your own numbers.
 - Correctness gates are a floor (deterministic asserts on stated contracts), not proof of general quality.

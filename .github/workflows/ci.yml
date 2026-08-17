@@ -22,5 +22,9 @@ jobs:
         run: npm test
       - name: Adapters in sync with rules/core.md
         run: node scripts/build-adapters.mjs --check
+      - name: Versions in sync (package, claude plugin, codex plugin)
+        run: node scripts/check-versions.mjs
       - name: Gate benchmark regression (100% vague caught, 0 false blocks)
         run: node bench/gate-bench.mjs --ci
+      - name: Publishable package sanity (npm pack contents)
+        run: npm pack --dry-run

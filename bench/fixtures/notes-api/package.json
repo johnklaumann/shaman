@@ -1,0 +1,9 @@
+{
+  "name": "notes-api-fixture",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pinned fixture app for the shaman agentic benchmark. Zero dependencies.",
+  "scripts": {
+    "test": "node --test"
+  }
+}

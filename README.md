@@ -1,5 +1,10 @@
 # shaman
 
+[![CI](https://github.com/johnklaumann/shaman/actions/workflows/ci.yml/badge.svg)](https://github.com/johnklaumann/shaman/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/shaman-ai)](https://www.npmjs.com/package/shaman-ai)
+[![zero deps](https://img.shields.io/badge/dependencies-0-brightgreen)](package.json)
+[![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
 > Tribe elder for your AI agent. Speaks little. Builds less. Blocks the bad hunt before it starts.
 
 Three pillars in one plugin:
@@ -154,22 +159,42 @@ Facts, code, and numbers are preserved by construction — the pairs live in `be
 
 `node bench/live-ab2.mjs` is the professional run and the only bench that calls the model. 14 tasks (`bench/corpus/tasks2.jsonl`) in three tiers — 4 small utilities, 6 medium components (LRU cache, rate limiter, RFC 4180 CSV parser...), 4 large modules (TODO store with validation, layered config loader, state machine...) — each with an explicit export contract, identical for both arms. Every trial's code is **executed against adversarial asserts** (`bench/checks.mjs`: quoted-CSV edge cases, LRU eviction order, per-key rate-limit isolation, invalid-input rejection). A smaller answer that fails its gate is a loss, not a saving. Every gate is self-tested against committed reference implementations in CI before any API spend.
 
-One run, `claude-haiku-4-5`, 3 trials/arm, $0.65:
+**n=10 trials per arm** (280 calls, `claude-haiku-4-5`, $2.15) — large enough that single-run noise stops dominating:
 
 | tier | tasks | output tokens | saved | LOC | correctness off → on | time/task |
 |---|---|---|---|---|---|---|
-| small | 4 | 1995 → 1925 | 4% | 47 → 42 | 92% → **100%** | 7.9s → 8.7s |
-| medium | 6 | 10059 → 8306 | **17%** | 175 → 155 | 94% → 94% | 19.0s → 17.1s |
-| large | 4 | 8776 → 6615 | **25%** | 130 → 118 | 92% → 92% | 23.5s → 19.8s |
-| **all** | **14** | **20831 → 16846** | **19%** | **352 → 315 (−11%)** | **93% → 95%** | **17.1s → 15.4s** |
+| small | 4 | 2120 → 1818 | **14%** | 41 → 40 | 97.5% → **100%** | 8.0s → 7.6s |
+| medium | 6 | 9294 → 8848 | 5% | 175 → 151 | 98.3% → 96.7% | 18.3s → 18.6s |
+| large | 4 | 7168 → 6700 | 7% | 129 → 111 | 82.5% → **90.0%** | 20.6s → 20.2s |
+| **all** | **14** | **18582 → 17366** | **7%** | **344 → 302 (−12%)** | **93.6% → 95.7%** | **16.0s → 15.9s** |
 
 The three findings that matter:
 
-- **Savings grow with task size** — 4% on small tasks, 17% on medium, 25% on large. The bigger the task, the more prose, options, and boilerplate there is to not write. This is where a real workload lives.
-- **Correctness never paid for it** — 95% pass rate with shaman on vs 93% off (84 gated executions per arm). Small tier went to 100%. "Build less" here means fewer comment lines (25 → 13) and fewer speculative variants, not fewer guards — the adversarial gates (path isolation, eviction order, quote escaping) still pass.
-- **Faster too** — mean time per task dropped 17.1s → 15.4s; fewer output tokens is also less generation time.
+- **Single-shot token savings are real but modest: ~7% pooled** (95% CI in the report). Earlier n=3 runs of this same suite gave 19% and 1% — that spread is why we ran n=10 and report the CI instead of cherry-picking. Anyone quoting a single n=3 run at you is selling.
+- **Correctness improves, and most where it's hardest** — 95.7% vs 93.6% overall (140 gated executions per arm), and on the large tier **90.0% vs 82.5%**: the discipline rules help the model finish hard tasks correctly more often. "Build less" means comment lines halved (23 → 12) and fewer speculative variants — not fewer guards; the adversarial gates (eviction order, quote escaping, per-key isolation) still pass.
+- **12% less code at equal-or-better correctness** — the ponytail thesis, reproduced independently at smaller scale.
 
-Honest limits: one model, n=3, high per-task variance (a task can swing ±30% between runs — see per-task ranges in `bench/results/live2.json`, which stores every trial, failure reason, and a sample per arm). The 5 remaining gate failures (of 168 executions) are genuine model errors, quoted verbatim in the results file. Directional, not a guarantee. Full breakdown: [`bench/results/REPORT.md`](bench/results/REPORT.md). Rerun `bench/live-ab2.mjs`, or `/shaman-bench` on real sessions, for your own numbers.
+Honest limits: one model, per-task variance still visible at n=10 (`bench/results/live2.json` stores every trial, failure reason, and a sample per arm; failures are genuine model errors, quoted verbatim). Full breakdown incl. bootstrap CI: [`bench/results/REPORT.md`](bench/results/REPORT.md). Rerun `bench/live-ab2.mjs`, or `/shaman-bench` on real sessions, for your own numbers.
+
+### Whole-session agentic — the number that actually hits your bill
+
+Single-shot benches miss where real cost lives: multi-turn sessions re-reading context every turn. `node bench/agentic.mjs` runs **real Claude Code sessions with tools** (read/edit/bash) over a pinned zero-dep fixture app (`bench/fixtures/notes-api`), one ticket per session — bugfix with a seeded root cause, three HTTP features, input hardening, a dedup refactor. Each session's work is verified twice: the fixture test suite must stay green AND a black-box acceptance check must pass (every check is proven in CI to fail on the pristine fixture — a check that passes before the work is done measures nothing). Isolated per session: own workspace, own git repo, `--setting-sources project,local` so no user-level plugins contaminate either arm.
+
+6 tickets × 2 arms × 2 trials, `claude-haiku-4-5`, $1.55:
+
+| metric | off | on | delta |
+|---|---|---|---|
+| **completion (verified)** | **100%** | **100%** | 24/24 sessions each arm |
+| **session cost** (the bill) | $0.424 | $0.353 | **−17%** |
+| output tokens | 23202 | 17999 | −22% |
+| total input+output+cache-write | 94383 | 81983 | −13% |
+| cache reads | 1.98M | 1.66M | −16% |
+| mean session time | 87s | 63s | **−28%** |
+| turns (e.g. feat-delete) | 24.0 | 15.5 | fewer round-trips |
+
+This is the mechanism single-shot benches can't see: terse output means **fewer and shorter turns**, and every turn avoided is a full context re-read avoided — that's why cache reads drop 16% and sessions finish 28% faster at identical completion. The savings compound in agentic work instead of shrinking.
+
+Limits: small fixture app (5 files), 6 tickets, n=2, one model — the shape of the result (cost down, completion held) matters more than the exact percentages. Scale it up with `node bench/agentic.mjs claude-haiku-4-5 4`.
 
 ## Other tools
 

@@ -1,0 +1,6 @@
+{"id": "bugfix-month", "prompt": "Bug report: dates in note listings show the wrong month — a note created in August shows 07 as the month, January shows 00. Find the root cause and fix it. Keep the existing tests green."}
+{"id": "feat-delete", "prompt": "Add DELETE /notes/:id to the API: respond 204 with no body when the note existed and was deleted, 404 with a JSON error when the id is unknown. Follow the existing routing and response style. Keep tests green."}
+{"id": "feat-search", "prompt": "Add search to GET /notes: when a q query parameter is present, return only notes whose title contains q, case-insensitive. Without q, behavior stays exactly as today. Keep tests green."}
+{"id": "valid-limits", "prompt": "Harden note creation: POST /notes must reject titles longer than 100 characters with status 400 and a JSON error mentioning the limit, in the same error shape the endpoint already uses. Keep tests green."}
+{"id": "feat-stats", "prompt": "Add GET /notes/stats returning JSON {\"total\": <number of notes>}. Follow the existing routing and response style. Keep tests green."}
+{"id": "refactor-dedup", "prompt": "lib/store.js and lib/validate.js each define their own isNonEmptyString. Deduplicate it into one shared definition with no behavior change. Keep the public APIs of both modules and all tests green."}
