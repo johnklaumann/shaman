@@ -1,0 +1,1097 @@
+{
+  "model": "claude-haiku-4-5",
+  "trials": 3,
+  "rows": [
+    {
+      "id": "s-debounce",
+      "tier": "small",
+      "off": {
+        "trials": [
+          {
+            "tokens": 457,
+            "ms": 8125,
+            "loc": 9,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 528,
+            "ms": 8684,
+            "loc": 9,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 543,
+            "ms": 8284,
+            "loc": 9,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0102191,
+        "sample": "```javascript\nmodule.exports.debounce = function debounce(fn, waitMs) {\n  let timeoutId;\n\n  return function (...args) {\n    clearTimeout(timeoutId);\n    timeoutId = setTimeout(() => {\n      fn(...args);\n    }, waitMs);\n  };\n};\n```\n\nThis implementation:\n- Stores the timeout ID in a closure\n- Returns a debounced function that accepts any arguments\n- Clears the previous timeout on each call, canceling the pending execution\n- Only the last call within the silence window executes after `waitMs` milliseconds",
+        "tok": 509.3333333333333,
+        "ms": 8364.333333333334,
+        "loc": 9,
+        "comments": 0,
+        "passRate": 1
+      },
+      "on": {
+        "trials": [
+          {
+            "tokens": 999,
+            "ms": 15376,
+            "loc": 7,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 450,
+            "ms": 7484,
+            "loc": 9,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 399,
+            "ms": 10890,
+            "loc": 7,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.012023699999999998,
+        "sample": "```javascript\nmodule.exports.debounce = function debounce(fn, waitMs) {\n  let timeoutId;\n  return function(...args) {\n    clearTimeout(timeoutId);\n    timeoutId = setTimeout(() => fn.apply(this, args), waitMs);\n  };\n};\n```",
+        "tok": 616,
+        "ms": 11250,
+        "loc": 7.666666666666667,
+        "comments": 0,
+        "passRate": 1
+      }
+    },
+    {
+      "id": "s-retry",
+      "tier": "small",
+      "off": {
+        "trials": [
+          {
+            "tokens": 566,
+            "ms": 8813,
+            "loc": 14,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 572,
+            "ms": 10158,
+            "loc": 21,
+            "comments": 1,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 659,
+            "ms": 9358,
+            "loc": 22,
+            "comments": 2,
+            "pass": false,
+            "reason": "SyntaxError: await is only valid in async functions and the top level bodies of modules"
+          }
+        ],
+        "cost": 0.0115641,
+        "sample": "```javascript\nmodule.exports.retry = async (fn, attempts, delayMs) => {\n  let lastError;\n  \n  for (let i = 0; i < attempts; i++) {\n    try {\n      return await fn();\n    } catch (error) {\n      lastError = error;\n      if (i < attempts - 1) {\n        await new Promise(resolve => setTimeout(resolve, delayMs));\n      }\n    }\n  }\n  \n  throw lastError;\n};\n```\n\nThis retry helper:\n- Attempts to call `fn()` up to `attempts` times\n- Returns immediately on the first successful resolution\n- Waits `delayMs` milliseconds between retry attempts\n- Throws the last error if all attempts fail",
+        "tok": 599,
+        "ms": 9443,
+        "loc": 19,
+        "comments": 1,
+        "passRate": 0.6666666666666666
+      },
+      "on": {
+        "trials": [
+          {
+            "tokens": 399,
+            "ms": 7121,
+            "loc": 14,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 455,
+            "ms": 8204,
+            "loc": 14,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 558,
+            "ms": 8269,
+            "loc": 14,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0098437,
+        "sample": "```javascript\nmodule.exports.retry = async (fn, attempts, delayMs) => {\n  let lastError;\n  \n  for (let i = 0; i < attempts; i++) {\n    try {\n      return await fn();\n    } catch (error) {\n      lastError = error;\n      if (i < attempts - 1) {\n        await new Promise(resolve => setTimeout(resolve, delayMs));\n      }\n    }\n  }\n  \n  throw lastError;\n};\n```",
+        "tok": 470.6666666666667,
+        "ms": 7864.666666666667,
+        "loc": 14,
+        "comments": 0,
+        "passRate": 1
+      }
+    },
+    {
+      "id": "s-flatten",
+      "tier": "small",
+      "off": {
+        "trials": [
+          {
+            "tokens": 518,
+            "ms": 7531,
+            "loc": 12,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 220,
+            "ms": 4890,
+            "loc": 6,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 525,
+            "ms": 7197,
+            "loc": 6,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0088857,
+        "sample": "```javascript\nmodule.exports.flatten = function flatten(arr) {\n  const result = [];\n  \n  for (const item of arr) {\n    if (Array.isArray(item)) {\n      result.push(...flatten(item));\n    } else {\n      result.push(item);\n    }\n  }\n  \n  return result;\n};\n```\n\nThis recursive function iterates through the array and:\n- Recursively flattens any nested arrays\n- Adds non-array items directly to the result\n- Returns a completely flattened single-level array\n\nExample usage:\n```javascript\nflatten([1, [2, [3, [4, 5]]], 6]);  // [1, 2, 3, 4, 5, 6]\n```",
+        "tok": 421,
+        "ms": 6539.333333333333,
+        "loc": 8,
+        "comments": 0,
+        "passRate": 1
+      },
+      "on": {
+        "trials": [
+          {
+            "tokens": 360,
+            "ms": 6186,
+            "loc": 11,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 584,
+            "ms": 10145,
+            "loc": 5,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 437,
+            "ms": 7167,
+            "loc": 11,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0096803,
+        "sample": "```javascript\nmodule.exports.flatten = function flatten(arr) {\n  const result = [];\n  for (const item of arr) {\n    if (Array.isArray(item)) {\n      result.push(...flatten(item));\n    } else {\n      result.push(item);\n    }\n  }\n  return result;\n};\n```\n\nRecursive traversal—checks each item, flattens arrays, spreads results into output.",
+        "tok": 460.3333333333333,
+        "ms": 7832.666666666667,
+        "loc": 9,
+        "comments": 0,
+        "passRate": 1
+      }
+    },
+    {
+      "id": "s-config",
+      "tier": "small",
+      "off": {
+        "trials": [
+          {
+            "tokens": 495,
+            "ms": 7260,
+            "loc": 10,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 356,
+            "ms": 6635,
+            "loc": 13,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 547,
+            "ms": 7905,
+            "loc": 10,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.009566700000000001,
+        "sample": "```javascript\nconst fs = require('fs');\n\nfunction readConfig(filePath) {\n  try {\n    const content = fs.readFileSync(filePath, 'utf8');\n    return JSON.parse(content);\n  } catch (error) {\n    return {};\n  }\n}\n\nmodule.exports.readConfig = readConfig;\n```\n\nThis function:\n- Reads the file synchronously using `fs.readFileSync`\n- Parses it as JSON with `JSON.parse`\n- Returns an empty object `{}` if the file doesn't exist or if JSON parsing fails\n- Exports via `module.exports.readConfig` as requested",
+        "tok": 466,
+        "ms": 7266.666666666667,
+        "loc": 11,
+        "comments": 0,
+        "passRate": 1
+      },
+      "on": {
+        "trials": [
+          {
+            "tokens": 219,
+            "ms": 5211,
+            "loc": 12,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 605,
+            "ms": 11034,
+            "loc": 8,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 309,
+            "ms": 6870,
+            "loc": 13,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0084463,
+        "sample": "```javascript\nconst fs = require('fs');\n\nmodule.exports.readConfig = function readConfig(filePath) {\n  try {\n    const content = fs.readFileSync(filePath, 'utf8');\n    return JSON.parse(content);\n  } catch (err) {\n    if (err.code === 'ENOENT') {\n      return {};\n    }\n    throw err;\n  }\n};\n```",
+        "tok": 377.6666666666667,
+        "ms": 7705,
+        "loc": 11,
+        "comments": 0,
+        "passRate": 1
+      }
+    },
+    {
+      "id": "m-lru",
+      "tier": "medium",
+      "off": {
+        "trials": [
+          {
+            "tokens": 1033,
+            "ms": 15413,
+            "loc": 30,
+            "comments": 4,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 985,
+            "ms": 14379,
+            "loc": 30,
+            "comments": 4,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 1336,
+            "ms": 20189,
+            "loc": 31,
+            "comments": 5,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.022494649999999998,
+        "sample": "```javascript\nclass LRU {\n  constructor(capacity) {\n    this.capacity = capacity;\n    this.cache = new Map();\n  }\n\n  get(key) {\n    if (!this.cache.has(key)) {\n      return undefined;\n    }\n    const value = this.cache.get(key);\n    // Refresh recency by removing and re-adding\n    this.cache.delete(key);\n    this.cache.set(key, value);\n    return value;\n  }\n\n  set(key, value) {\n    // Remove if exists to update position\n    if (this.cache.has(key)) {\n      this.cache.delete(key);\n    }\n    // Add as most recently used\n    this.cache.set(key, value);\n    // Evict least recently used if over capacity\n    if (this.cache.size > this.capacity) {\n      const lruKey = this.cache.keys().next().value;\n      this.cache.delete(lruKey);\n    }\n  }\n}\n\nmodule.exports.LRU = LRU;\n```\n\nThis implementation uses a `Map` which maintains insertion order in JavaScript. Deleting and re-adding items moves them to the end, making them the most recently used. The least recently used item is always the first entry in the Map, so we evict it when capacity is exceeded.",
+        "tok": 1118,
+        "ms": 16660.333333333332,
+        "loc": 30.333333333333332,
+        "comments": 4.333333333333333,
+        "passRate": 1
+      },
+      "on": {
+        "trials": [
+          {
+            "tokens": 1413,
+            "ms": 18460,
+            "loc": 25,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 896,
+            "ms": 14500,
+            "loc": 22,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 1022,
+            "ms": 14886,
+            "loc": 25,
+            "comments": 2,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0194423,
+        "sample": "```javascript\nclass LRU {\n  constructor(capacity) {\n    this.capacity = capacity;\n    this.cache = new Map();\n  }\n\n  get(key) {\n    if (!this.cache.has(key)) {\n      return undefined;\n    }\n    const value = this.cache.get(key);\n    this.cache.delete(key);\n    this.cache.set(key, value);\n    return value;\n  }\n\n  set(key, value) {\n    if (this.cache.has(key)) {\n      this.cache.delete(key);\n    }\n    this.cache.set(key, value);\n    if (this.cache.size > this.capacity) {\n      this.cache.delete(this.cache.keys().next().value);\n    }\n  }\n}\n\nmodule.exports.LRU = LRU;\n```\n\nUses Map's insertion-order guarantee: `get()` evicts and re-inserts to move to end (most recent), `set()` deletes the first key (least recent) when over capacity.",
+        "tok": 1110.3333333333333,
+        "ms": 15948.666666666666,
+        "loc": 24,
+        "comments": 0.6666666666666666,
+        "passRate": 1
+      }
+    },
+    {
+      "id": "m-ratelimit",
+      "tier": "medium",
+      "off": {
+        "trials": [
+          {
+            "tokens": 1012,
+            "ms": 14583,
+            "loc": 24,
+            "comments": 2,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 1093,
+            "ms": 12563,
+            "loc": 30,
+            "comments": 3,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 970,
+            "ms": 13628,
+            "loc": 27,
+            "comments": 4,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0179601,
+        "sample": "```javascript\nmodule.exports.createRateLimiter = function({ limit, windowMs }) {\n  const state = {}; // { [key]: { count, windowStart } }\n\n  return {\n    allow(key) {\n      const now = Date.now();\n      \n      if (!state[key]) {\n        state[key] = { count: 1, windowStart: now };\n        return true;\n      }\n\n      const { count, windowStart } = state[key];\n      \n      // Check if current window has expired\n      if (now >= windowStart + windowMs) {\n        state[key] = { count: 1, windowStart: now };\n        return true;\n      }\n      \n      // Window still active\n      if (count < limit) {\n        state[key].count++;\n        return true;\n      }\n      \n      return false;\n    }\n  };\n};\n```\n\n**How it works:**\n- Maintains a state object tracking `count` and `windowStart` for each key\n- On each `allow()` call, checks if the current time has passed the window expiration (`now >= windowStart + windowMs`)\n- If window expired or key is new, resets counter to 1 and returns `true`\n- If window is active and budget remains (`count < limit`), increments counter and returns `true`\n- If window is active but limit is reached, returns `false`\n- Each key maintains its own isolated window and counter",
+        "tok": 1025,
+        "ms": 13591.333333333334,
+        "loc": 27,
+        "comments": 3,
+        "passRate": 1
+      },
+      "on": {
+        "trials": [
+          {
+            "tokens": 1216,
+            "ms": 19106,
+            "loc": 18,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 1105,
+            "ms": 15009,
+            "loc": 24,
+            "comments": 2,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 1252,
+            "ms": 18948,
+            "loc": 20,
+            "comments": 2,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0206547,
+        "sample": "```javascript\nmodule.exports.createRateLimiter = function({ limit, windowMs }) {\n  const buckets = new Map();\n\n  return {\n    allow(key) {\n      const now = Date.now();\n      let bucket = buckets.get(key);\n\n      if (!bucket || now - bucket.start >= windowMs) {\n        buckets.set(key, { count: 1, start: now });\n        return true;\n      }\n\n      if (bucket.count < limit) {\n        bucket.count++;\n        return true;\n      }\n\n      return false;\n    }\n  };\n};\n```\n\nTracks `count` and window `start` time per key. On each call, checks if in new window (elapsed time ≥ windowMs) and resets if so. Within same window, allows requests while count stays below limit. Keys maintain isolated buckets.",
+        "tok": 1191,
+        "ms": 17687.666666666668,
+        "loc": 20.666666666666668,
+        "comments": 1.3333333333333333,
+        "passRate": 1
+      }
+    },
+    {
+      "id": "m-argparse",
+      "tier": "medium",
+      "off": {
+        "trials": [
+          {
+            "tokens": 733,
+            "ms": 9773,
+            "loc": 24,
+            "comments": 4,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 727,
+            "ms": 9216,
+            "loc": 24,
+            "comments": 4,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 799,
+            "ms": 10243,
+            "loc": 24,
+            "comments": 2,
+            "pass": false,
+            "reason": "SyntaxError: Identifier 'parseArgs' has already been declared"
+          }
+        ],
+        "cost": 0.0138723,
+        "sample": "```javascript\nmodule.exports.parseArgs = function(argv) {\n  const result = { _: [] };\n  \n  for (let i = 0; i < argv.length; i++) {\n    const arg = argv[i];\n    \n    if (arg.startsWith('--')) {\n      const rest = arg.slice(2);\n      \n      if (rest.includes('=')) {\n        // --key=value\n        const [key, value] = rest.split('=');\n        result[key] = value;\n      } else {\n        // --flag\n        result[rest] = true;\n      }\n    } else {\n      // Positional\n      result._.push(arg);\n    }\n  }\n  \n  return result;\n};\n```\n\nUsage example:\n```javascript\nconst { parseArgs } = require('./parser');\n\nconst args = parseArgs(['--verbose', '--output=file.txt', 'input.txt', '--debug']);\n// Result: { verbose: true, output: 'file.txt', debug: true, _: ['input.txt'] }\n```",
+        "tok": 753,
+        "ms": 9744,
+        "loc": 24,
+        "comments": 3.3333333333333335,
+        "passRate": 0.6666666666666666
+      },
+      "on": {
+        "trials": [
+          {
+            "tokens": 747,
+            "ms": 10358,
+            "loc": 23,
+            "comments": 1,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 690,
+            "ms": 9094,
+            "loc": 23,
+            "comments": 1,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 632,
+            "ms": 8428,
+            "loc": 23,
+            "comments": 3,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0131269,
+        "sample": "```javascript\nmodule.exports.parseArgs = function(argv) {\n  const result = { _: [] };\n  \n  for (let i = 0; i < argv.length; i++) {\n    const arg = argv[i];\n    \n    if (arg.startsWith('--')) {\n      const content = arg.slice(2);\n      const eqIndex = content.indexOf('=');\n      \n      if (eqIndex > -1) {\n        const key = content.slice(0, eqIndex);\n        const value = content.slice(eqIndex + 1);\n        result[key] = value;\n      } else {\n        result[content] = true;\n      }\n    } else {\n      result._.push(arg);\n    }\n  }\n  \n  return result;\n};\n```\n\nUsage:\n```javascript\nconst { parseArgs } = require('./parser');\n\nparseArgs(['--verbose', '--file=test.txt', 'input.js']);\n// { verbose: true, file: 'test.txt', _: ['input.js'] }\n```",
+        "tok": 689.6666666666666,
+        "ms": 9293.333333333334,
+        "loc": 23,
+        "comments": 1.6666666666666667,
+        "passRate": 1
+      }
+    },
+    {
+      "id": "m-csvparse",
+      "tier": "medium",
+      "off": {
+        "trials": [
+          {
+            "tokens": 3967,
+            "ms": 38079,
+            "loc": 35,
+            "comments": 4,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 1502,
+            "ms": 17356,
+            "loc": 28,
+            "comments": 4,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 6861,
+            "ms": 64071,
+            "loc": 39,
+            "comments": 4,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0642342,
+        "sample": "```javascript\nmodule.exports.parseCsvLine = function parseCsvLine(line) {\n  const fields = [];\n  let currentField = '';\n  let isQuoted = false;\n  \n  for (let i = 0; i < line.length; i++) {\n    const char = line[i];\n    \n    if (isQuoted) {\n      if (char === '\"') {\n        if (line[i + 1] === '\"') {\n          // Escaped quote\n          currentField += '\"';\n          i++;\n        } else {\n          // End of quoted field\n          isQuoted = false;\n        }\n      } else {\n        currentField += char;\n      }\n    } else {\n      if (char === '\"' && currentField === '') {\n        // Start of quoted field\n        isQuoted = true;\n      } else if (char === ',') {\n        // Field separator\n        fields.push(currentField);\n        currentField = '';\n      } else {\n        currentField += char;\n      }\n    }\n  }\n  \n  fields.push(currentField);\n  return fields;\n};\n```\n\nExamples:\n- `parseCsvLine('a,b,c')` → `['a', 'b', 'c']`\n- `parseCsvLine('\"a,b\",c')` → `['a,b', 'c']`\n- `parseCsvLine('\"a\"\"b\",c')` → `['a\"b', 'c']`\n- `parseCsvLine('\"\"')` → `['']`",
+        "tok": 4110,
+        "ms": 39835.333333333336,
+        "loc": 34,
+        "comments": 4,
+        "passRate": 1
+      },
+      "on": {
+        "trials": [
+          {
+            "tokens": 2935,
+            "ms": 32420,
+            "loc": 28,
+            "comments": 5,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 3316,
+            "ms": 35237,
+            "loc": 39,
+            "comments": 5,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 2809,
+            "ms": 29271,
+            "loc": 27,
+            "comments": 4,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.048088799999999994,
+        "sample": "```javascript\nmodule.exports.parseCsvLine = function parseCsvLine(line) {\n  const fields = [];\n  let field = '';\n  let inQuotes = false;\n  \n  for (let i = 0; i < line.length; i++) {\n    const char = line[i];\n    \n    if (char === '\"') {\n      if (inQuotes && line[i + 1] === '\"') {\n        // Escaped quote: doubled quote inside quoted field\n        field += '\"';\n        i++; // Skip next quote\n      } else {\n        // Quote boundary: toggle quote state\n        inQuotes = !inQuotes;\n      }\n    } else if (char === ',' && !inQuotes) {\n      // Field separator: comma outside quotes\n      fields.push(field);\n      field = '';\n    } else {\n      // Regular character\n      field += char;\n    }\n  }\n  \n  // Push final field\n  fields.push(field);\n  \n  return fields;\n};\n```\n\nParser logic:\n- Toggles `inQuotes` on quote char (unless it's escaped by doubling)\n- When inQuotes and see quote followed by quote: add single quote, skip both\n- Comma only splits fields if outside quotes\n- Collects all other chars into field\n- Returns all fields (including empty ones from consecutive commas)",
+        "tok": 3020,
+        "ms": 32309.333333333332,
+        "loc": 31.333333333333332,
+        "comments": 4.666666666666667,
+        "passRate": 1
+      }
+    },
+    {
+      "id": "m-deepmerge",
+      "tier": "medium",
+      "off": {
+        "trials": [
+          {
+            "tokens": 1906,
+            "ms": 20993,
+            "loc": 22,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 2117,
+            "ms": 22027,
+            "loc": 40,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 2345,
+            "ms": 25408,
+            "loc": 21,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0344191,
+        "sample": "```javascript\nmodule.exports.deepMerge = function deepMerge(base, override) {\n  const isPlainObject = (val) => val !== null && typeof val === 'object' && !Array.isArray(val);\n\n  if (!isPlainObject(override)) {\n    return override;\n  }\n\n  if (!isPlainObject(base)) {\n    return deepMerge({}, override);\n  }\n\n  const result = { ...base };\n\n  for (const key in override) {\n    if (Object.prototype.hasOwnProperty.call(override, key)) {\n      const baseVal = result[key];\n      const overrideVal = override[key];\n\n      if (isPlainObject(baseVal) && isPlainObject(overrideVal)) {\n        result[key] = deepMerge(baseVal, overrideVal);\n      } else {\n        result[key] = overrideVal;\n      }\n    }\n  }\n\n  return result;\n};\n```\n\nThis implementation:\n- Creates a new object via shallow spread, then recursively merges nested plain objects\n- Returns override values for arrays and scalars (replacing base values)\n- Never mutates either input\n- Handles edge cases like `null`, non-object types, and missing keys",
+        "tok": 2122.6666666666665,
+        "ms": 22809.333333333332,
+        "loc": 27.666666666666668,
+        "comments": 0,
+        "passRate": 1
+      },
+      "on": {
+        "trials": [
+          {
+            "tokens": 466,
+            "ms": 7267,
+            "loc": 28,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 3508,
+            "ms": 33234,
+            "loc": 32,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 382,
+            "ms": 6433,
+            "loc": 15,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0245637,
+        "sample": "```javascript\nmodule.exports.deepMerge = function deepMerge(base, override) {\n  if (override == null || typeof override !== 'object' || Array.isArray(override)) {\n    return override;\n  }\n  if (base == null || typeof base !== 'object' || Array.isArray(base)) {\n    return deepMerge({}, override);\n  }\n\n  const result = { ...base };\n  for (const key in override) {\n    if (Object.prototype.hasOwnProperty.call(override, key)) {\n      const baseVal = result[key];\n      const overrideVal = override[key];\n\n      if (\n        overrideVal != null &&\n        typeof overrideVal === 'object' &&\n        !Array.isArray(overrideVal) &&\n        baseVal != null &&\n        typeof baseVal === 'object' &&\n        !Array.isArray(baseVal)\n      ) {\n        result[key] = deepMerge(baseVal, overrideVal);\n      } else {\n        result[key] = overrideVal;\n      }\n    }\n  }\n  return result;\n};\n```",
+        "tok": 1452,
+        "ms": 15644.666666666666,
+        "loc": 25,
+        "comments": 0,
+        "passRate": 1
+      }
+    },
+    {
+      "id": "m-emitter",
+      "tier": "medium",
+      "off": {
+        "trials": [
+          {
+            "tokens": 982,
+            "ms": 11713,
+            "loc": 34,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 816,
+            "ms": 11121,
+            "loc": 30,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 993,
+            "ms": 11759,
+            "loc": 33,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.016534399999999998,
+        "sample": "Here's a complete EventEmitter implementation:\n\n```javascript\nmodule.exports.EventEmitter = class EventEmitter {\n  constructor() {\n    this.events = {};\n  }\n\n  on(event, handler) {\n    if (!this.events[event]) {\n      this.events[event] = [];\n    }\n    this.events[event].push({ handler, once: false });\n    return this;\n  }\n\n  off(event, handler) {\n    if (!this.events[event]) return this;\n    this.events[event] = this.events[event].filter(\n      listener => listener.handler !== handler\n    );\n    return this;\n  }\n\n  once(event, handler) {\n    if (!this.events[event]) {\n      this.events[event] = [];\n    }\n    this.events[event].push({ handler, once: true });\n    return this;\n  }\n\n  emit(event, ...args) {\n    if (!this.events[event]) return this;\n    this.events[event] = this.events[event].filter(listener => {\n      listener.handler(...args);\n      return !listener.once;\n    });\n    return this;\n  }\n};\n```\n\n**Key features:**\n- `on()` and `once()` register listeners; `off()` removes by handler reference\n- `emit()` calls all listeners with provided args, automatically removing one-time listeners after execution\n- All methods return `this` for optional chaining\n- Stores listeners with metadata to track which are one-time",
+        "tok": 930.3333333333334,
+        "ms": 11531,
+        "loc": 32.333333333333336,
+        "comments": 0,
+        "passRate": 1
+      },
+      "on": {
+        "trials": [
+          {
+            "tokens": 837,
+            "ms": 12235,
+            "loc": 29,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 936,
+            "ms": 11866,
+            "loc": 36,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 756,
+            "ms": 10163,
+            "loc": 28,
+            "comments": 0,
+            "pass": false,
+            "reason": "TypeError: e.on is not a function"
+          }
+        ],
+        "cost": 0.015429,
+        "sample": "```javascript\nmodule.exports.EventEmitter = class EventEmitter {\n  constructor() {\n    this.listeners = {};\n  }\n\n  on(event, handler) {\n    if (!this.listeners[event]) {\n      this.listeners[event] = [];\n    }\n    this.listeners[event].push(handler);\n    return this;\n  }\n\n  off(event, handler) {\n    if (!this.listeners[event]) return this;\n    this.listeners[event] = this.listeners[event].filter(h => h !== handler);\n    return this;\n  }\n\n  once(event, handler) {\n    const wrapped = (...args) => {\n      handler(...args);\n      this.off(event, wrapped);\n    };\n    return this.on(event, wrapped);\n  }\n\n  emit(event, ...args) {\n    if (!this.listeners[event]) return false;\n    this.listeners[event].forEach(handler => handler(...args));\n    return true;\n  }\n};\n```",
+        "tok": 843,
+        "ms": 11421.333333333334,
+        "loc": 31,
+        "comments": 0,
+        "passRate": 0.6666666666666666
+      }
+    },
+    {
+      "id": "l-todo",
+      "tier": "large",
+      "off": {
+        "trials": [
+          {
+            "tokens": 1142,
+            "ms": 13747,
+            "loc": 38,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 1187,
+            "ms": 16189,
+            "loc": 49,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 1509,
+            "ms": 16871,
+            "loc": 33,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.02544385,
+        "sample": "```javascript\nmodule.exports.createTodoStore = function createTodoStore() {\n  let todos = [];\n  let nextId = 1;\n\n  return {\n    add({ title }) {\n      if (typeof title !== 'string') {\n        throw new Error('Title must be a string');\n      }\n      if (title.trim() === '') {\n        throw new Error('Title cannot be empty');\n      }\n\n      const todo = {\n        id: nextId++,\n        title: title.trim(),\n        done: false\n      };\n\n      todos.push(todo);\n      return todo;\n    },\n\n    list() {\n      return todos.map(todo => ({ ...todo }));\n    },\n\n    complete(id) {\n      const todo = todos.find(t => t.id === id);\n      if (!todo) {\n        throw new Error(`Todo with id ${id} not found`);\n      }\n      todo.done = true;\n    },\n\n    remove(id) {\n      const index = todos.findIndex(t => t.id === id);\n      if (index === -1) {\n        throw new Error(`Todo with id ${id} not found`);\n      }\n      todos.splice(index, 1);\n    }\n  };\n};\n```\n\nThis module:\n- **Uses a closure** to maintain private state (todos array and nextId counter)\n- **Validates input** in `add()`: checks that title is a string and not empty after trimming\n- **Generates unique IDs** automatically for each todo\n- **Returns copies** from `list()` to prevent external mutation of internal state\n- **Throws descriptive errors** when operations fail (unknown IDs in `complete()` and `remove()`)\n- **Works immediately**—just require it and call `createTodoStore()` to get a new store instance",
+        "tok": 1279.3333333333333,
+        "ms": 15602.333333333334,
+        "loc": 40,
+        "comments": 0,
+        "passRate": 1
+      },
+      "on": {
+        "trials": [
+          {
+            "tokens": 1037,
+            "ms": 13065,
+            "loc": 35,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 1014,
+            "ms": 11656,
+            "loc": 41,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 1152,
+            "ms": 14621,
+            "loc": 37,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.020722849999999998,
+        "sample": "```javascript\nmodule.exports.createTodoStore = function createTodoStore() {\n  let todos = [];\n  let nextId = 1;\n\n  return {\n    add({ title }) {\n      if (typeof title !== 'string' || !title.trim()) {\n        throw new Error('Title must be a non-empty string');\n      }\n      const todo = {\n        id: nextId++,\n        title: title.trim(),\n        done: false\n      };\n      todos.push(todo);\n      return todo;\n    },\n\n    list() {\n      return todos.slice();\n    },\n\n    complete(id) {\n      const todo = todos.find(t => t.id === id);\n      if (!todo) {\n        throw new Error(`Todo with id ${id} not found`);\n      }\n      todo.done = true;\n    },\n\n    remove(id) {\n      const index = todos.findIndex(t => t.id === id);\n      if (index === -1) {\n        throw new Error(`Todo with id ${id} not found`);\n      }\n      todos.splice(index, 1);\n    }\n  };\n};\n```\n\nModule uses closure for state isolation. ID generation increments from 1. Validation rejects falsy/whitespace-only strings. Methods throw with descriptive messages on bad input. `list()` returns shallow copy to prevent direct mutation.",
+        "tok": 1067.6666666666667,
+        "ms": 13114,
+        "loc": 37.666666666666664,
+        "comments": 0,
+        "passRate": 1
+      }
+    },
+    {
+      "id": "l-mdtable",
+      "tier": "large",
+      "off": {
+        "trials": [
+          {
+            "tokens": 1470,
+            "ms": 17523,
+            "loc": 29,
+            "comments": 10,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 1054,
+            "ms": 13901,
+            "loc": 23,
+            "comments": 4,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 1428,
+            "ms": 16046,
+            "loc": 20,
+            "comments": 0,
+            "pass": false,
+            "reason": "SyntaxError: Unexpected token '|'"
+          }
+        ],
+        "cost": 0.0223439,
+        "sample": "```javascript\nmodule.exports.mdTable = function mdTable(rows) {\n  if (!rows || rows.length === 0) {\n    throw new Error('rows must be a non-empty array');\n  }\n\n  const keys = Object.keys(rows[0]);\n  \n  // Escape pipe characters in cell values\n  const escapeCell = (value) => String(value).replace(/\\|/g, '\\\\|');\n\n  // Header row\n  const headerRow = '| ' + keys.join(' | ') + ' |';\n  \n  // Separator row\n  const separatorRow = '| ' + keys.map(() => '---').join(' | ') + ' |';\n  \n  // Data rows\n  const dataRows = rows.map(row => {\n    const cells = keys.map(key => escapeCell(row[key]));\n    return '| ' + cells.join(' | ') + ' |';\n  });\n  \n  // Return combined table\n  return [headerRow, separatorRow, ...dataRows].join('\\n');\n};\n```\n\nUsage example:\n```javascript\nconst { mdTable } = require('./table');\n\nmdTable([\n  { name: 'Alice', status: 'active' },\n  { name: 'Bob|Dev', status: 'inactive' }\n]);\n\n// Output:\n// | name | status |\n// | --- | --- |\n// | Alice | active |\n// | Bob\\|Dev | inactive |\n```",
+        "tok": 1317.3333333333333,
+        "ms": 15823.333333333334,
+        "loc": 24,
+        "comments": 4.666666666666667,
+        "passRate": 0.6666666666666666
+      },
+      "on": {
+        "trials": [
+          {
+            "tokens": 1797,
+            "ms": 22221,
+            "loc": 21,
+            "comments": 0,
+            "pass": false,
+            "reason": "SyntaxError: Unexpected token '|'"
+          },
+          {
+            "tokens": 1265,
+            "ms": 19213,
+            "loc": 10,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 1124,
+            "ms": 14610,
+            "loc": 12,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0237185,
+        "sample": "```javascript\nmodule.exports.mdTable = function mdTable(rows) {\n  const keys = Object.keys(rows[0]);\n  \n  const header = \"| \" + keys.join(\" | \") + \" |\";\n  const separator = \"| \" + keys.map(() => \"---\").join(\" | \") + \" |\";\n  \n  const dataRows = rows.map(row => {\n    const cells = keys.map(key => {\n      const value = String(row[key] ?? \"\").replace(/\\|/g, \"\\\\|\");\n      return value;\n    });\n    return \"| \" + cells.join(\" | \") + \" |\";\n  });\n  \n  return [header, separator, ...dataRows].join(\"\\n\");\n};\n```\n\nEscapes pipes in cell values with backslash. Converts values to strings, treats null/undefined as empty. Usage:\n\n```javascript\nmdTable([\n  { name: \"Alice|Smith\", age: 30 },\n  { name: \"Bob\", age: 25 }\n]);\n```\n\nReturns:\n```\n| name | age |\n| --- | --- |\n| Alice\\|Smith | 30 |\n| Bob | 25 |\n```",
+        "tok": 1395.3333333333333,
+        "ms": 18681.333333333332,
+        "loc": 14.333333333333334,
+        "comments": 0,
+        "passRate": 0.6666666666666666
+      }
+    },
+    {
+      "id": "l-configloader",
+      "tier": "large",
+      "off": {
+        "trials": [
+          {
+            "tokens": 6277,
+            "ms": 60559,
+            "loc": 35,
+            "comments": 6,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 7110,
+            "ms": 70412,
+            "loc": 36,
+            "comments": 5,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 2913,
+            "ms": 28164,
+            "loc": 32,
+            "comments": 3,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0840998,
+        "sample": "```javascript\nconst fs = require('fs');\n\nmodule.exports.loadConfig = function loadConfig({ defaults = {}, filePath, env = {}, envPrefix = '' }) {\n  // Start with defaults\n  let config = { ...defaults };\n\n  // Merge JSON file if it exists\n  if (filePath) {\n    try {\n      const content = fs.readFileSync(filePath, 'utf-8');\n      const fileConfig = JSON.parse(content);\n      config = { ...config, ...fileConfig };\n    } catch (error) {\n      // Silently skip if file is missing or invalid\n    }\n  }\n\n  // Merge environment variables\n  if (envPrefix) {\n    Object.entries(env).forEach(([key, value]) => {\n      if (key.startsWith(envPrefix)) {\n        // Remove prefix and convert to lowercase config key\n        const configKey = key.slice(envPrefix.length).toLowerCase();\n        \n        // Coerce the value\n        let coercedValue = value;\n        if (value === 'true') {\n          coercedValue = true;\n        } else if (value === 'false') {\n          coercedValue = false;\n        } else if (value !== '' && !isNaN(value)) {\n          coercedValue = Number(value);\n        }\n        \n        config[configKey] = coercedValue;\n      }\n    });\n  }\n\n  return config;\n};\n```\n\nThe loader merges configs in order of precedence: defaults → file → environment variables. Environment keys are matched by prefix (e.g., `APP_PORT` with prefix `APP_`), stripped to the config key name (`port`), and converted to lowercase. String values are coerced to booleans (`'true'`/`'false'`) or numbers (numeric strings), with other strings preserved as-is.",
+        "tok": 5433.333333333333,
+        "ms": 53045,
+        "loc": 34.333333333333336,
+        "comments": 4.666666666666667,
+        "passRate": 1
+      },
+      "on": {
+        "trials": [
+          {
+            "tokens": 2805,
+            "ms": 32915,
+            "loc": 33,
+            "comments": 6,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 3144,
+            "ms": 34638,
+            "loc": 38,
+            "comments": 4,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 3959,
+            "ms": 39801,
+            "loc": 39,
+            "comments": 5,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0523444,
+        "sample": "```javascript\nconst fs = require('fs');\n\nmodule.exports.loadConfig = function loadConfig({ defaults = {}, filePath, env = {}, envPrefix = '' }) {\n  // Start with defaults\n  const config = { ...defaults };\n\n  // Merge JSON file if it exists\n  if (filePath) {\n    try {\n      const fileContent = fs.readFileSync(filePath, 'utf8');\n      const fileConfig = JSON.parse(fileContent);\n      Object.assign(config, fileConfig);\n    } catch (err) {\n      // Silently skip if file missing or invalid JSON\n    }\n  }\n\n  // Merge environment variables\n  for (const [key, value] of Object.entries(env)) {\n    if (key.startsWith(envPrefix)) {\n      // Remove prefix and convert to lowercase\n      const configKey = key.slice(envPrefix.length).toLowerCase();\n      \n      // Coerce value\n      let coercedValue = value;\n      if (value === 'true') {\n        coercedValue = true;\n      } else if (value === 'false') {\n        coercedValue = false;\n      } else if (/^-?\\d+(\\.\\d+)?$/.test(value)) {\n        coercedValue = Number(value);\n      }\n      \n      config[configKey] = coercedValue;\n    }\n  }\n\n  return config;\n};\n```",
+        "tok": 3302.6666666666665,
+        "ms": 35784.666666666664,
+        "loc": 36.666666666666664,
+        "comments": 5,
+        "passRate": 1
+      }
+    },
+    {
+      "id": "l-statemachine",
+      "tier": "large",
+      "off": {
+        "trials": [
+          {
+            "tokens": 799,
+            "ms": 10266,
+            "loc": 37,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 745,
+            "ms": 9277,
+            "loc": 30,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 695,
+            "ms": 8472,
+            "loc": 28,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.013781599999999998,
+        "sample": "```javascript\nmodule.exports.createMachine = function createMachine({ initial, states }) {\n  let currentState = initial;\n\n  return {\n    get state() {\n      return currentState;\n    },\n    send(event) {\n      const transitions = states[currentState]?.on || {};\n      const nextState = transitions[event];\n      if (nextState !== undefined) {\n        currentState = nextState;\n      }\n    }\n  };\n};\n```\n\n**Usage example:**\n\n```javascript\nconst { createMachine } = require('./machine');\n\nconst machine = createMachine({\n  initial: 'idle',\n  states: {\n    idle: {\n      on: { START: 'running' }\n    },\n    running: {\n      on: { STOP: 'idle', PAUSE: 'paused' }\n    },\n    paused: {\n      on: { RESUME: 'running', STOP: 'idle' }\n    }\n  }\n});\n\nconsole.log(machine.state);  // 'idle'\nmachine.send('START');\nconsole.log(machine.state);  // 'running'\nmachine.send('PAUSE');\nconsole.log(machine.state);  // 'paused'\nmachine.send('INVALID');     // ignored, state unchanged\nconsole.log(machine.state);  // 'paused'\n```",
+        "tok": 746.3333333333334,
+        "ms": 9338.333333333334,
+        "loc": 31.666666666666668,
+        "comments": 0,
+        "passRate": 1
+      },
+      "on": {
+        "trials": [
+          {
+            "tokens": 903,
+            "ms": 14194,
+            "loc": 29,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 847,
+            "ms": 10846,
+            "loc": 29,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          },
+          {
+            "tokens": 799,
+            "ms": 9858,
+            "loc": 30,
+            "comments": 0,
+            "pass": true,
+            "reason": ""
+          }
+        ],
+        "cost": 0.0155362,
+        "sample": "```javascript\nmodule.exports.createMachine = function createMachine({ initial, states }) {\n  let currentState = initial;\n  \n  return {\n    get state() {\n      return currentState;\n    },\n    send(event) {\n      const stateConfig = states[currentState];\n      if (stateConfig?.on?.[event]) {\n        currentState = stateConfig.on[event];\n      }\n    }\n  };\n};\n```\n\nUsage:\n```javascript\nconst { createMachine } = require('./machine');\n\nconst light = createMachine({\n  initial: 'off',\n  states: {\n    off: { on: { toggle: 'on' } },\n    on: { on: { toggle: 'off' } }\n  }\n});\n\nconsole.log(light.state); // 'off'\nlight.send('toggle');\nconsole.log(light.state); // 'on'\nlight.send('toggle');\nconsole.log(light.state); // 'off'\nlight.send('invalid'); // Ignored, no effect\nconsole.log(light.state); // 'off'\n```",
+        "tok": 849.6666666666666,
+        "ms": 11632.666666666666,
+        "loc": 29.333333333333332,
+        "comments": 0,
+        "passRate": 1
+      }
+    }
+  ],
+  "tiers": {
+    "small": {
+      "n": 4,
+      "offTok": 1995.3333333333333,
+      "onTok": 1924.6666666666667,
+      "offLoc": 47,
+      "onLoc": 41.66666666666667,
+      "offMs": 7903.333333333334,
+      "onMs": 8663.083333333334,
+      "offComments": 1,
+      "onComments": 0,
+      "offPass": 0.9166666666666666,
+      "onPass": 1
+    },
+    "medium": {
+      "n": 6,
+      "offTok": 10059,
+      "onTok": 8306,
+      "offLoc": 175.33333333333334,
+      "onLoc": 155,
+      "offMs": 19028.555555555555,
+      "onMs": 17050.833333333332,
+      "offComments": 14.666666666666666,
+      "onComments": 8.333333333333334,
+      "offPass": 0.9444444444444443,
+      "onPass": 0.9444444444444445
+    },
+    "large": {
+      "n": 4,
+      "offTok": 8776.333333333334,
+      "onTok": 6615.333333333333,
+      "offLoc": 130,
+      "onLoc": 117.99999999999999,
+      "offMs": 23452.25,
+      "onMs": 19803.166666666668,
+      "offComments": 9.333333333333334,
+      "onComments": 5,
+      "offPass": 0.9166666666666666,
+      "onPass": 0.9166666666666666
+    }
+  },
+  "overall": {
+    "n": 14,
+    "offTok": 20830.666666666664,
+    "onTok": 16846,
+    "offLoc": 352.3333333333333,
+    "onLoc": 314.6666666666667,
+    "offMs": 17113.833333333336,
+    "onMs": 15440.714285714286,
+    "offComments": 25,
+    "onComments": 13.333333333333334,
+    "offPass": 0.9285714285714285,
+    "onPass": 0.9523809523809523
+  },
+  "costUsd": 0.6490408499999999
+}

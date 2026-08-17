@@ -1,13 +1,13 @@
 {
-  "prompts": 44,
+  "prompts": 57,
   "vagueRecall": 1,
   "vagueBlock": 1,
   "mediumCaught": 1,
   "strongSilent": 1,
   "falseBlocks": 0,
-  "legit": 22,
-  "latencyMeanMs": 92.85792727272725,
-  "latencyP95Ms": 108.9916,
+  "legit": 30,
+  "latencyMeanMs": 97.4147807017544,
+  "latencyP95Ms": 129.5725,
   "cats": {
     "vague": {
       "block": 16,
@@ -44,6 +44,18 @@
       "enrich": 0,
       "pass": 3,
       "total": 3
+    },
+    "complex-strong": {
+      "block": 0,
+      "enrich": 0,
+      "pass": 8,
+      "total": 8
+    },
+    "verbose-vague": {
+      "block": 0,
+      "enrich": 5,
+      "pass": 0,
+      "total": 5
     }
   }
 }

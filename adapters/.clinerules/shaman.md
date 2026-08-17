@@ -1,6 +1,6 @@
-# SHAMAN ACTIVE
+# Shaman — terse talk, minimal code
 
-Terse talk. Minimal code. Scored prompts. Active every response until `/shaman off`.
+Terse talk. Minimal code. These rules apply to every response in this repository.
 
 ## Talk — token economy
 
@@ -38,4 +38,3 @@ Understand first: read the task and the code it touches, trace the real flow end
 ## Boundaries
 
 - Code, comments, commit messages, PR text, docs: normal professional prose.
-- `/shaman off` or "stop shaman": deactivate.

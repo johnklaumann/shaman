@@ -1,0 +1,49 @@
+{
+  "name": "shaman-ai",
+  "version": "0.2.0",
+  "description": "Tribe elder for your AI agent. Terse talk, minimal code, and a prompt gate that scores every prompt 0-100 before it burns tokens. Works with Claude Code, Codex, Cursor, Copilot, Windsurf, Cline, Kiro, Qoder, Gemini CLI.",
+  "bin": {
+    "shaman": "src/cli/index.js"
+  },
+  "main": "src/lib/score.js",
+  "files": [
+    "src/",
+    "hooks/",
+    "rules/",
+    "commands/",
+    "adapters/",
+    ".claude-plugin/",
+    ".codex-plugin/",
+    "scripts/build-adapters.mjs",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "build": "node scripts/build-adapters.mjs",
+    "check": "node scripts/build-adapters.mjs --check",
+    "bench": "node bench/gate-bench.mjs && node bench/footprint.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnklaumann/shaman.git"
+  },
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "codex",
+    "cursor",
+    "copilot",
+    "token-economy",
+    "prompt-quality",
+    "prompt-scoring",
+    "yagni",
+    "minimalism",
+    "ai-agent"
+  ],
+  "author": "John Klaumann",
+  "license": "MIT"
+}

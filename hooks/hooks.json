@@ -2,6 +2,19 @@
   "hooks": {
     "SessionStart": [
       {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/src/hooks/activate.js\"",
+            "timeout": 5,
+            "statusMessage": "Waking the shaman..."
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
         "hooks": [
           {
             "type": "command",

@@ -1,0 +1,101 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+const GATE = path.join(root, 'src', 'hooks', 'gate.js');
+
+// Each test gets an isolated CLAUDE_CONFIG_DIR — the real ~/.claude is never touched.
+function makeConfig(state = { mode: 'full', gate: 'coach' }) {
+  const cfg = fs.mkdtempSync(path.join(os.tmpdir(), 'shaman-test-'));
+  fs.mkdirSync(path.join(cfg, 'shaman'), { recursive: true });
+  fs.writeFileSync(path.join(cfg, 'shaman', 'state.json'), JSON.stringify(state));
+  return cfg;
+}
+
+function runGate(cfg, prompt, sessionId = 's1') {
+  return spawnSync('node', [GATE], {
+    input: JSON.stringify({ prompt, session_id: sessionId }),
+    env: { ...process.env, CLAUDE_CONFIG_DIR: cfg },
+    encoding: 'utf8',
+  });
+}
+
+test('coach blocks a vague prompt with the scorecard on stderr', () => {
+  const cfg = makeConfig();
+  const r = runGate(cfg, 'fix it');
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /SHAMAN GATE/);
+  assert.match(r.stderr, /\/100/);
+  assert.match(r.stderr, /target/);
+  fs.rmSync(cfg, { recursive: true, force: true });
+});
+
+test('block cooldown: second vague prompt in the same session falls back to enrich', () => {
+  const cfg = makeConfig();
+  assert.equal(runGate(cfg, 'fix it', 'same').status, 2);
+  const second = runGate(cfg, 'make it better', 'same');
+  assert.equal(second.status, 0);
+  const out = JSON.parse(second.stdout);
+  assert.equal(out.hookSpecificOutput.hookEventName, 'UserPromptSubmit');
+  assert.match(out.hookSpecificOutput.additionalContext, /scored \d+\/100/);
+  fs.rmSync(cfg, { recursive: true, force: true });
+});
+
+test('strong prompt passes silently — zero output', () => {
+  const cfg = makeConfig();
+  const r = runGate(cfg, 'Fix the token expiry check in auth/middleware.ts — expired tokens still pass, must reject with 401.');
+  assert.equal(r.status, 0);
+  assert.equal(r.stdout, '');
+  fs.rmSync(cfg, { recursive: true, force: true });
+});
+
+test('enrich mode never blocks, even weak prompts', () => {
+  const cfg = makeConfig({ mode: 'full', gate: 'enrich' });
+  const r = runGate(cfg, 'fix it');
+  assert.equal(r.status, 0);
+  assert.match(JSON.parse(r.stdout).hookSpecificOutput.additionalContext, /assumptions/);
+  fs.rmSync(cfg, { recursive: true, force: true });
+});
+
+test('gate off: everything passes untouched', () => {
+  const cfg = makeConfig({ mode: 'full', gate: 'off' });
+  const r = runGate(cfg, 'fix it');
+  assert.equal(r.status, 0);
+  assert.equal(r.stdout, '');
+  fs.rmSync(cfg, { recursive: true, force: true });
+});
+
+test('slash commands are never gated; mode command persists state', () => {
+  const cfg = makeConfig();
+  const r = runGate(cfg, '/shaman ultra');
+  assert.equal(r.status, 0);
+  const state = JSON.parse(fs.readFileSync(path.join(cfg, 'shaman', 'state.json'), 'utf8'));
+  assert.equal(state.mode, 'ultra');
+  fs.rmSync(cfg, { recursive: true, force: true });
+});
+
+test('mid-session mode switch marks the session mixed for bench honesty', () => {
+  const cfg = makeConfig({ mode: 'full', gate: 'coach', sessions: { s9: { mode: 'full', gate: 'coach', ts: Date.now() } } });
+  runGate(cfg, '/shaman off', 's9');
+  const state = JSON.parse(fs.readFileSync(path.join(cfg, 'shaman', 'state.json'), 'utf8'));
+  assert.equal(state.sessions.s9.mode, 'mixed');
+  assert.equal(state.mode, 'off');
+  fs.rmSync(cfg, { recursive: true, force: true });
+});
+
+test('questions are never blocked even in coach mode', () => {
+  const cfg = makeConfig();
+  const r = runGate(cfg, 'why does test_login fail?');
+  assert.equal(r.status, 0);
+  fs.rmSync(cfg, { recursive: true, force: true });
+});
+
+test('gate fails open on malformed stdin', () => {
+  const r = spawnSync('node', [GATE], { input: 'not json{{', env: { ...process.env, CLAUDE_CONFIG_DIR: makeConfig() }, encoding: 'utf8' });
+  assert.equal(r.status, 0);
+});

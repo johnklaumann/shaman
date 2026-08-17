@@ -1,6 +1,8 @@
 #!/usr/bin/env node
-// SessionStart hook: inject the shaman ruleset as context.
-// stdout on exit 0 becomes context Claude can see.
+// SessionStart + SubagentStart hook: inject the shaman ruleset as context.
+// stdout on exit 0 becomes context Claude can see. Subagents get the same rules
+// (a terse main agent with verbose subagents leaks the savings) but skip session
+// bookkeeping — their token usage lands in the parent session's transcript.
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
@@ -9,12 +11,13 @@ const { loadState, writeState, pruneSessions, readStdin } = require('../lib/stat
 try {
   const input = readStdin();
   const { state, corrupt } = loadState();
+  const isSubagent = input.hook_event_name === 'SubagentStart';
 
   // Record the mode this session starts under, so bench snapshots stay accurate
   // even if the global mode changes later from another window. Skip the write if
   // the state file is corrupt — never persist the DEFAULTS fallback over a file
   // the user may be able to recover.
-  if (!corrupt) {
+  if (!corrupt && !isSubagent) {
     const sessions = pruneSessions(state.sessions);
     if (input.session_id && !sessions[input.session_id]) {
       sessions[input.session_id] = { mode: state.mode, gate: state.gate, ts: Date.now() };

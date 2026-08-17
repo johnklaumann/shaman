@@ -8,7 +8,7 @@
     {
       "name": "shaman",
       "source": "./",
-      "description": "Terse talk, minimal code, best practices — and a prompt gate that stops bad prompts before they burn tokens.",
+      "description": "Terse talk, minimal code, best practices — and a prompt gate that scores every prompt 0-100 before it burns tokens.",
       "category": "productivity"
     }
   ]

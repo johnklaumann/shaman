@@ -1,0 +1,23 @@
+{
+  "name": "shaman",
+  "version": "0.2.0",
+  "description": "Tribe elder for your AI agent. Terse talk, minimal code, and a prompt gate that scores every prompt before it burns tokens.",
+  "author": {
+    "name": "John Klaumann",
+    "url": "https://github.com/johnklaumann"
+  },
+  "homepage": "https://github.com/johnklaumann/shaman",
+  "repository": "https://github.com/johnklaumann/shaman",
+  "license": "MIT",
+  "keywords": ["token-economy", "prompt-quality", "yagni", "minimalism", "productivity"],
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "Shaman",
+    "shortDescription": "Terse talk, minimal code, scored prompts",
+    "longDescription": "Three pillars: terse output that never cuts facts, a decision ladder that builds the minimum, and a local prompt gate that scores prompts 0-100 before any tokens are spent.",
+    "developerName": "John Klaumann",
+    "category": "Productivity",
+    "capabilities": ["Instructions", "Lifecycle hooks"],
+    "websiteURL": "https://github.com/johnklaumann/shaman"
+  }
+}

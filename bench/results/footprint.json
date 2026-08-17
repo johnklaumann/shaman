@@ -1,19 +1,19 @@
 {
   "rules": {
     "full": {
-      "chars": 1611,
-      "words": 237,
-      "tokens": 385
+      "chars": 2661,
+      "words": 410,
+      "tokens": 642
     },
     "lite": {
-      "chars": 1514,
-      "words": 223,
-      "tokens": 361
+      "chars": 2564,
+      "words": 396,
+      "tokens": 618
     },
     "ultra": {
-      "chars": 1665,
-      "words": 246,
-      "tokens": 397
+      "chars": 2715,
+      "words": 419,
+      "tokens": 654
     },
     "off": {
       "chars": 0,
@@ -21,5 +21,5 @@
       "tokens": 0
     }
   },
-  "nodeBootMedianMs": 73.0421
+  "nodeBootMedianMs": 100.7423
 }

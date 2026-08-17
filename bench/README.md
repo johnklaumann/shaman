@@ -4,10 +4,11 @@ Reproducible measurements for the three pillars. Every number in the main README
 "Real cases" section comes from running these scripts. No hand-typed results.
 
 ```
-node bench/gate-bench.mjs       # prompt gate accuracy (deterministic, free)
-node bench/footprint.mjs        # injected-ruleset token size + hook latency (free)
-node bench/compress-bench.mjs   # talk-style output-token reduction (free)
-node bench/live-ab.mjs [model]  # real end-to-end on/off A/B (spends tokens, see below)
+node bench/gate-bench.mjs             # prompt gate accuracy (deterministic, free)
+node bench/footprint.mjs              # injected-ruleset token size + hook latency (free)
+node bench/compress-bench.mjs         # talk-style output-token reduction (free)
+node bench/live-ab.mjs [model]        # v1: small single-shot on/off A/B (spends tokens)
+node bench/live-ab2.mjs [model] [n]   # v2: tiered + CORRECTNESS-GATED A/B (spends tokens)
 ```
 
 Results are written to `bench/results/*.json`. Requires Node (any recent) and, for
@@ -17,7 +18,8 @@ the token-count scripts, Python with `tiktoken` (`pip install tiktoken`).
 
 ### 1. Prompt gate — `gate-bench.mjs` (deterministic, real, free)
 
-Pipes a labeled corpus (`corpus/prompts.jsonl`, 44 prompts, EN+PT) through the **real**
+Pipes a labeled corpus (`corpus/prompts.jsonl`, 57 prompts, EN+PT — including complex
+multi-requirement briefs and verbose-but-vague prompts) through the **real**
 `src/hooks/gate.js` and reads the outcome from the hook's actual contract: exit 2 =
 blocked, `additionalContext` on stdout = enriched, silent exit 0 = passed. Each prompt
 gets a unique `session_id` so the 3-minute block cooldown never hides a block; config is
@@ -51,7 +53,21 @@ numbers depend on task, model, and tool use. The pairs are committed so anyone c
 whether the default side is a fair, natural baseline (it is meant to be — not a strawman)
 and re-measure.
 
-### 4. Live A/B — `live-ab.mjs` (real end-to-end, spends tokens)
+### 4. Live A/B v2 — `live-ab2.mjs` (tiered, correctness-gated, spends tokens)
+
+The professional run. 14 tasks in three tiers (`corpus/tasks2.jsonl`: 4 small utilities,
+6 medium components, 4 large modules), each with an explicit `module.exports` contract in
+the prompt — identical for both arms. Per trial it measures output tokens, wall time, LOC
+across all fenced blocks, comment lines, and **correctness**: the extracted code runs
+against an adversarial assert script (`checks.mjs` — RFC 4180 quoted CSV, LRU eviction
+order, per-key rate-limit isolation, invalid-input rejection...) in a sandboxed child
+process with a hard timeout. Fewer lines that fail the gate are a loss, not a saving.
+
+`tests/checks.test.mjs` proves every gate is satisfiable by a committed reference
+implementation and can fail a broken one — the self-test runs in CI, before any API
+spend, ponytail-style.
+
+### 5. Live A/B v1 — `live-ab.mjs` (small single-shot, spends tokens)
 
 The only bench that calls the model. For each task in `corpus/tasks.jsonl` it runs
 `claude -p` twice with the same model — once plain (plugin **off**), once with

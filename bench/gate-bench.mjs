@@ -57,20 +57,22 @@ for (const row of rows) {
   row.got = outcome;
 }
 
-// Human-intent success: vague/medium must be CAUGHT (block or enrich, not passed
-// silently); strong/question/ack/conv must NOT be blocked (a block is the one
-// failure the "never gets in your way" promise forbids).
+// Expect-driven scoring against the human labels in the corpus:
+//   expect block  -> must be caught (block, or enrich once the cooldown holds)
+//   expect enrich -> must be enriched, never blocked, never passed silently
+//   expect pass   -> must never be blocked; strong-task cats must pass SILENTLY
 const caught = (o) => o === 'block' || o === 'enrich';
-const vague = rows.filter((r) => r.cat === 'vague');
-const medium = rows.filter((r) => r.cat === 'medium');
-const legit = rows.filter((r) => ['strong', 'question', 'ack', 'conv'].includes(r.cat));
+const vague = rows.filter((r) => r.expect === 'block');
+const medium = rows.filter((r) => r.expect === 'enrich');
+const legit = rows.filter((r) => r.expect === 'pass');
+const strongCats = ['strong', 'complex-strong'];
 
 const vagueRecall = vague.filter((r) => caught(r.got)).length / vague.length;
 const vagueBlock = vague.filter((r) => r.got === 'block').length / vague.length;
-const mediumCaught = medium.filter((r) => caught(r.got)).length / medium.length;
-const falseBlocks = legit.filter((r) => r.got === 'block');
-const strongSilent = rows.filter((r) => r.cat === 'strong' && r.got === 'pass').length /
-  rows.filter((r) => r.cat === 'strong').length;
+const mediumCaught = medium.filter((r) => r.got === 'enrich').length / medium.length;
+const falseBlocks = rows.filter((r) => r.expect !== 'block' && r.got === 'block');
+const strongRows = rows.filter((r) => strongCats.includes(r.cat));
+const strongSilent = strongRows.filter((r) => r.got === 'pass').length / strongRows.length;
 
 latencies.sort((a, b) => a - b);
 const pct = (p) => latencies[Math.min(latencies.length - 1, Math.floor(p * latencies.length))];
@@ -84,11 +86,11 @@ for (const [cat, c] of Object.entries(cats)) {
     `block ${String(c.block).padStart(2)}  enrich ${String(c.enrich).padStart(2)}  pass ${String(c.pass).padStart(2)}`);
 }
 console.log('\nheadline metrics:');
-console.log(`  vague caught (block|enrich) ....... ${pf(vagueRecall)}  (${vague.length} vague prompts)`);
+console.log(`  vague caught (block|enrich) ....... ${pf(vagueRecall)}  (${vague.length} expect-block prompts)`);
 console.log(`  vague hard-blocked ................ ${pf(vagueBlock)}`);
-console.log(`  medium caught ..................... ${pf(mediumCaught)}  (${medium.length} prompts)`);
-console.log(`  strong passed silently ............ ${pf(strongSilent)}`);
-console.log(`  FALSE BLOCKS on legit prompts ..... ${falseBlocks.length} / ${legit.length}  (${pf(falseBlocks.length / legit.length)})`);
+console.log(`  underspecified enriched ........... ${pf(mediumCaught)}  (${medium.length} expect-enrich prompts, incl. verbose-vague)`);
+console.log(`  strong passed silently ............ ${pf(strongSilent)}  (${strongRows.length} incl. complex multi-requirement)`);
+console.log(`  FALSE BLOCKS on legit prompts ..... ${falseBlocks.length} / ${legit.length + medium.length}  (${pf(falseBlocks.length / (legit.length + medium.length))})`);
 if (falseBlocks.length) for (const f of falseBlocks) console.log(`      ! blocked: "${f.text.slice(0, 60)}"`);
 console.log('\nlatency per prompt (end-to-end, incl. node cold start):');
 console.log(`  mean ${mean.toFixed(1)}ms   p50 ${pct(0.5).toFixed(1)}ms   p95 ${pct(0.95).toFixed(1)}ms`);
@@ -102,5 +104,20 @@ const summary = {
   falseBlocks: falseBlocks.length, legit: legit.length,
   latencyMeanMs: mean, latencyP95Ms: pct(0.95), cats,
 };
+fs.mkdirSync(path.join(here, 'results'), { recursive: true });
 fs.writeFileSync(path.join(here, 'results', 'gate.json'), JSON.stringify(summary, null, 2));
 console.log('wrote bench/results/gate.json');
+
+// --ci: regression gate. The two promises that define the product — every vague
+// prompt caught, zero false blocks on legit prompts — fail the build if broken.
+if (process.argv.includes('--ci')) {
+  const fail = [];
+  if (vagueRecall < 1) fail.push(`vague recall ${pf(vagueRecall)} < 100%`);
+  if (falseBlocks.length > 0) fail.push(`${falseBlocks.length} false blocks`);
+  if (strongSilent < 1) fail.push(`strong silent ${pf(strongSilent)} < 100%`);
+  if (fail.length) {
+    console.error(`CI GATE FAILED: ${fail.join('; ')}`);
+    process.exit(1);
+  }
+  console.log('CI gate passed: 100% vague caught, 100% strong silent, 0 false blocks');
+}
