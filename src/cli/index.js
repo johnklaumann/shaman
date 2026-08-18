@@ -29,7 +29,7 @@ function cmdScore(args) {
     console.log(`not scored (${r.exempt}) — gate never touches ${kinds[r.exempt]}.`);
     return;
   }
-  const label = { weak: 'weak — would be blocked in coach mode', medium: 'medium — would pass, enriched', strong: 'strong — passes silently' }[r.band];
+  const label = { weak: 'weak — would pause for confirmation (default), or block in coach mode', medium: 'medium — would pass, enriched', strong: 'strong — passes silently' }[r.band];
   console.log(renderCard(r, { title: `score ${r.score}/100 · ${label}` }));
   if (r.isQuestion) console.log('\n  (question — never blocked, enriched at most)');
   if (r.band === 'weak') process.exit(2);

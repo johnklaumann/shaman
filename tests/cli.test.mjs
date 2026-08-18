@@ -14,7 +14,7 @@ const run = (args, opts = {}) => spawnSync('node', [CLI, ...args], { encoding: '
 test('score: weak prompt exits 2 with the card', () => {
   const r = run(['score', 'fix it']);
   assert.equal(r.status, 2);
-  assert.match(r.stdout, /weak — would be blocked/);
+  assert.match(r.stdout, /weak — would pause for confirmation/);
 });
 
 test('score: strong prompt exits 0', () => {

@@ -1,6 +1,6 @@
 {
   "name": "shaman-ai",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Tribe elder for your AI agent. Terse talk, minimal code, and a prompt gate that scores every prompt 0-100 before it burns tokens. Works with Claude Code, Codex, Cursor, Copilot, Windsurf, Cline, Kiro, Qoder, Gemini CLI.",
   "bin": {
     "shaman": "src/cli/index.js"

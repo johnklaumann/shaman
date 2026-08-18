@@ -26,7 +26,7 @@ test('loadState returns defaults when no file exists, not corrupt', () => {
   withTempConfig(({ loadState }) => {
     const { state, corrupt } = loadState();
     assert.equal(state.mode, 'full');
-    assert.equal(state.gate, 'enrich');
+    assert.equal(state.gate, 'confirm');
     assert.equal(corrupt, false);
   });
 });

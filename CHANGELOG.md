@@ -4,6 +4,14 @@ All notable changes to shaman. Format follows [Keep a Changelog](https://keepach
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-18
+
+### Added
+- **`confirm` gate mode, now the default** — a weak prompt (score < 20) pauses the agent before any tokens are spent and shows the scorecard plus a preview of the exact context the gate would add; you resend to proceed with it, or rewrite. The resend lands within the block cooldown and falls through to enrich, so proceeding always injects that context. `enrich` (silent pass) and `coach` (hard block) are still available via `/shaman-gate`; `/shaman-gate off` disables the gate entirely. Existing installs keep whatever gate they had persisted — only fresh installs default to `confirm`.
+
+### Changed
+- `UserPromptSubmit` block path generalized to serve both `confirm` and `coach` (one cooldown, one write); CLI `score` and all docs describe the weak-prompt outcome as a pause-to-confirm by default
+
 ## [0.2.1] - 2026-08-17
 
 ### Added
@@ -37,7 +45,8 @@ The "prove it" release: prompt scoring, any-tool support, and benchmarks with te
 
 Initial release: terse talk (caveman DNA), decision ladder (ponytail DNA), prompt gate (coach/enrich), per-session token benchmarks, static rule files for Cursor/Codex/Copilot.
 
-[Unreleased]: https://github.com/johnklaumann/shaman/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/johnklaumann/shaman/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/johnklaumann/shaman/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/johnklaumann/shaman/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/johnklaumann/shaman/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/johnklaumann/shaman/releases/tag/v0.1.0

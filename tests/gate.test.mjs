@@ -62,6 +62,41 @@ test('enrich mode never blocks, even weak prompts', () => {
   fs.rmSync(cfg, { recursive: true, force: true });
 });
 
+test('confirm pauses a weak prompt with the scorecard and a preview of the added context', () => {
+  const cfg = makeConfig({ mode: 'full', gate: 'confirm' });
+  const r = runGate(cfg, 'fix it');
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /SHAMAN GATE/);
+  assert.match(r.stderr, /Context I'll add/);
+  assert.match(r.stderr, /PROCEED/);
+  fs.rmSync(cfg, { recursive: true, force: true });
+});
+
+test('confirm: resending within cooldown proceeds with the context injected', () => {
+  const cfg = makeConfig({ mode: 'full', gate: 'confirm' });
+  assert.equal(runGate(cfg, 'fix it', 'c1').status, 2);
+  const second = runGate(cfg, 'fix it', 'c1');
+  assert.equal(second.status, 0);
+  assert.match(JSON.parse(second.stdout).hookSpecificOutput.additionalContext, /assumptions/);
+  fs.rmSync(cfg, { recursive: true, force: true });
+});
+
+test('confirm is the default: a state file with no gate pauses weak prompts', () => {
+  const cfg = makeConfig({ mode: 'full' }); // no gate key -> DEFAULTS.gate
+  const r = runGate(cfg, 'fix it');
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /Context I'll add/);
+  fs.rmSync(cfg, { recursive: true, force: true });
+});
+
+test('/shaman-gate confirm persists the mode', () => {
+  const cfg = makeConfig({ mode: 'full', gate: 'off' });
+  assert.equal(runGate(cfg, '/shaman-gate confirm').status, 0);
+  const state = JSON.parse(fs.readFileSync(path.join(cfg, 'shaman', 'state.json'), 'utf8'));
+  assert.equal(state.gate, 'confirm');
+  fs.rmSync(cfg, { recursive: true, force: true });
+});
+
 test('gate off: everything passes untouched', () => {
   const cfg = makeConfig({ mode: 'full', gate: 'off' });
   const r = runGate(cfg, 'fix it');

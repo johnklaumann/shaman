@@ -10,7 +10,7 @@ Three pillars in one plugin:
 
 1. **Talk less** — terse output that cuts the fat, never the facts (caveman DNA)
 2. **Build less** — decision ladder before any code: YAGNI > reuse > stdlib > native > installed dependency > one line > minimum build. Root-cause fixes, no over-engineering, best practices always (ponytail DNA)
-3. **Score the prompt** — the part nobody else does. A local hook scores every prompt **0–100** *before it reaches the model*. Weak prompt? Blocked with a scorecard showing exactly which dimension to fill — zero tokens spent — or enriched so the model states its assumptions and asks exactly one clarifying question instead of guessing.
+3. **Score the prompt** — the part nobody else does. A local hook scores every prompt **0–100** *before it reaches the model*. Weak prompt? By default the agent **pauses** and shows you the scorecard plus a preview of the context it would add — resend to proceed, or rewrite. Want it stricter or quieter? `coach` blocks outright; `enrich` passes silently and just makes the model state its assumptions and ask one clarifying question instead of guessing.
 
 Plus **benchmarks**: per-session token stats so you can see the difference instead of believing a README.
 
@@ -63,7 +63,7 @@ Requires Node.js ≥ 18. Zero dependencies.
 | Command | What it does |
 |---------|--------------|
 | `/shaman [lite\|full\|ultra\|ab\|off]` | Talk level. `full` (default) drops articles, allows fragments. `lite` keeps full sentences. `ultra` — one word when one word enough. `ab` — self-measuring A/B: alternates whole-plugin on/off by calendar-day parity and auto-stamps each session's arm, so `/shaman-bench` builds your own on-vs-off numbers from normal work. |
-| `/shaman-gate [coach\|enrich\|off]` | Prompt gate. `coach` blocks weak prompts (score < 20) before they burn tokens. `enrich` (default) lets them pass but injects the score + forces stated assumptions + max one clarifying question. |
+| `/shaman-gate [confirm\|coach\|enrich\|off]` | Prompt gate. `confirm` (default) pauses weak prompts (score < 20) and previews the context it will add — resend to proceed. `coach` blocks them outright. `enrich` passes silently, injecting the score + forcing stated assumptions + max one clarifying question. |
 | `/shaman-score <prompt>` | Score a prompt 0–100 with the dimension breakdown, without sending it. |
 | `/shaman-bench` | Token stats per session, split by mode — your own numbers, on vs off. |
 | `/shaman-init` | Generate rule files for 8 other tools in the current repo. |
@@ -73,16 +73,16 @@ CLI twins for any environment: `npx github:johnklaumann/shaman score "..."` (exi
 
 ## The prompt gate
 
-`"fix it"` → **blocked** (coach mode), before a single token is spent — stderr shows the scorecard above plus a rewrite example.
+`"fix it"` → **paused** (confirm mode, the default) before a single token is spent — stderr shows the scorecard above plus a preview of the context it will add; resend to proceed, or rewrite. Switch to `coach` and the same prompt is blocked outright with a rewrite example.
 
 Design constraints, so it never gets in your way:
 
 - Strong prompts pass **silently** — zero overhead, nothing injected. A prompt that names a target and an action is strong by structure, even when short (`update README.md with the install steps`).
 - Never gated: slash commands, questions (enriched at most, never blocked), acknowledgements ("yes", "sounds good, go ahead", "pode"), and anything with neither an action verb nor a code/file reference — no action and no target means conversation, not a task.
-- Coach blocks at most once per 3 minutes per session, then falls back to enrich. No block loops.
+- Confirm and coach interrupt at most once per 3 minutes per session, then the resend falls through to enrich. No block loops.
 - Local heuristic: regex + structure checks, no API calls, fails open on its own errors.
 
-Why not rewrite the prompt automatically? Claude Code's `UserPromptSubmit` hook [can block or inject context, but cannot replace the prompt](https://code.claude.com/docs/en/hooks) — and that's the better design anyway: coach mode teaches you to write better prompts; silent rewriting would teach you nothing.
+Why not rewrite the prompt automatically? Claude Code's `UserPromptSubmit` hook [can block or inject context, but cannot replace the prompt](https://code.claude.com/docs/en/hooks) — and that's the better design anyway: confirm and coach show you what was thin so you learn to write it stronger; silent rewriting would teach you nothing.
 
 ## vs caveman & ponytail
 

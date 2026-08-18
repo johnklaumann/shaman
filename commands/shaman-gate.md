@@ -1,6 +1,6 @@
 ---
-description: Set prompt-gate mode (coach | enrich | off) or show current status
-argument-hint: "[coach|enrich|off]"
+description: Set prompt-gate mode (confirm | coach | enrich | off) or show current status
+argument-hint: "[confirm|coach|enrich|off]"
 ---
 
 Set or show the prompt-gate mode. Argument: `$ARGUMENTS` (empty = show status).
@@ -8,7 +8,8 @@ Set or show the prompt-gate mode. Argument: `$ARGUMENTS` (empty = show status).
 1. Read the state file at `$CLAUDE_CONFIG_DIR/shaman/state.json` (default `~/.claude/shaman/state.json`). The gate hook usually persists the change before this command runs.
 2. If an argument was given and `gate` in the state file differs, update the file (keep the other fields).
 3. Explain the active mode in one line:
-   - **coach** — weak prompts (score < 20/100) are blocked before reaching the model; user gets the scorecard showing which dimension to fill. Zero tokens spent on bad prompts. One block per 3 minutes per session, then it falls back to enrich.
-   - **enrich** — weak/medium prompts pass, but the model gets the score and is instructed to state assumptions, ask at most one clarifying question, and build the minimum. (default)
+   - **confirm** — weak prompts (score < 20/100) pause the agent: the user sees the scorecard plus a preview of the context that would be added, then resends to proceed with it or rewrites. Medium/strong pass. One pause per 3 minutes per session, then the resend falls through to enrich. (default)
+   - **coach** — weak prompts are blocked before reaching the model; the user gets the scorecard plus a rewrite example. Zero tokens spent on bad prompts. One block per 3 minutes per session, then it falls back to enrich.
+   - **enrich** — weak/medium prompts pass silently; the model gets the score and is instructed to state assumptions, ask at most one clarifying question, and build the minimum.
    - **off** — gate disabled.
 4. Confirm in one line: `shaman: mode=<mode> gate=<gate>`.

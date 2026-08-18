@@ -13,9 +13,10 @@ SHAMAN — terse talk, minimal code, scored prompts
   ultra  one word when one word enough
   ab     self-measuring A/B: odd days on, even days off, auto-stamped
 
-/shaman-gate [coach|enrich|off]    prompt gate (default: enrich)
-  coach  block weak prompts (score < 20) before they burn tokens
-  enrich let them pass, force assumptions + max 1 clarifying question
+/shaman-gate [confirm|coach|enrich|off]  prompt gate (default: confirm)
+  confirm pause weak prompts (score < 20), preview the context to add, resend to proceed
+  coach   block weak prompts before they burn tokens
+  enrich  let them pass silently, force assumptions + max 1 clarifying question
 
 /shaman-score <prompt>             score 0-100 + breakdown, without sending
 /shaman-bench                      token stats per session, on vs off

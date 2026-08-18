@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 
-const DEFAULTS = { mode: 'full', gate: 'enrich' };
+const DEFAULTS = { mode: 'full', gate: 'confirm' };
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 function configDir() {
