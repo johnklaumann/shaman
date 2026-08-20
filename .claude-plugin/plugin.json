@@ -1,6 +1,6 @@
 {
   "name": "shaman",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Tribe elder for your AI agent: terse talk, minimal code, best practices — and a prompt gate that scores every prompt 0-100 before it burns tokens.",
   "author": {
     "name": "John Klaumann",

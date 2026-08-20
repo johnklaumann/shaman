@@ -4,17 +4,18 @@
 [![zero deps](https://img.shields.io/badge/dependencies-0-brightgreen)](package.json)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-> Tribe elder for your AI agent. Speaks little. Builds less. Blocks the bad hunt before it starts.
+> Tribe elder for your AI agent. Speaks little. Builds less. Scores the prompt before it costs you — and checks the work before it says "done".
 
-Three pillars in one plugin:
+Four capabilities in one plugin:
 
 1. **Talk less** — terse output that cuts the fat, never the facts (caveman DNA)
 2. **Build less** — decision ladder before any code: YAGNI > reuse > stdlib > native > installed dependency > one line > minimum build. Root-cause fixes, no over-engineering, best practices always (ponytail DNA)
 3. **Score the prompt** — the part nobody else does. A local hook scores every prompt **0–100** *before it reaches the model*. Weak prompt? By default the agent **pauses** and shows you the scorecard plus a preview of the context it would add — resend to proceed, or rewrite. Want it stricter or quieter? `coach` blocks outright; `enrich` passes silently and just makes the model state its assumptions and ask one clarifying question instead of guessing.
+4. **Verify the "done"** *(new in v0.4.0)* — a `Stop` hook that, when the agent claims completion after editing code, runs your project's checks and scans the changed files for high-severity issues (secrets, injection, unsafe `eval`/`shell`). A "done" contradicted by a red check or a real finding is **blocked with the evidence** — the agent keeps working instead of handing you a false done.
 
 Plus **benchmarks**: per-session token stats so you can see the difference instead of believing a README.
 
-Most engineers don't have a token problem. They have a prompt problem that presents as a token problem. Shaman fixes both ends: the prompt going in, the code and prose coming out.
+Most engineers don't have a token problem. They have a prompt problem that presents as a token problem. Shaman works both ends — the prompt going in, the code and prose coming out — and then checks the "done" before you trust it.
 
 ## The score
 
@@ -36,7 +37,7 @@ Five dimensions, one number, concrete suggestions. The same engine drives the ga
 
 ## Install
 
-**Claude Code** (hooks: gate + scoring + per-session benchmarks + subagent rules):
+**Claude Code** (hooks: gate + scoring + verify + per-session benchmarks + subagent rules):
 
 ```
 claude plugin marketplace add johnklaumann/shaman
@@ -84,6 +85,23 @@ Design constraints, so it never gets in your way:
 
 Why not rewrite the prompt automatically? Claude Code's `UserPromptSubmit` hook [can block or inject context, but cannot replace the prompt](https://code.claude.com/docs/en/hooks) — and that's the better design anyway: confirm and coach show you what was thin so you learn to write it stronger; silent rewriting would teach you nothing.
 
+## Verify the "done"
+
+`"All fixed, tests pass."` — but are they? When a session **edited code** and the agent's final message **claims completion**, a `Stop` hook checks that claim against reality. A "done" contradicted by a red check or a real finding is **blocked (exit 2)** with the evidence, so the agent keeps working instead of reporting done.
+
+Two checks:
+
+- **Your project's checks** (opt-in) — configure `.shaman.json` at the repo root:
+  ```json
+  { "verify": { "checks": ["npm test", "npm run lint"] } }
+  ```
+  A non-zero exit while the agent claims done → blocked.
+- **Security/quality scan** (always on) — the edited files, high-severity only: hardcoded secrets, interpolated SQL, `eval` / `new Function`, `shell=true` / `os.system`, unsafe deserialization. Calibrated on a 649-file corpus of real agent-authored code — **~0.8% block rate**, not the ~17% noise of a generic scanner. Findings in test files never block.
+
+Conservative by design, same as the gate: silent unless completion is explicitly claimed, WIP wording ("still failing", "next step") never blocks, one confrontation per issue per session, fail-open. Findings logged to `~/.claude/shaman/verify.jsonl`. Disable with `verify: "off"` in `.shaman.json` or state.json.
+
+**Honest scope.** Verify catches a false "done" only when it has a *mechanical* signal — a red check or a security finding. Subjective or behavioral incompleteness ("the UX isn't right", "these two parts don't talk to each other") is out of reach; no automated check catches that. This is a verification aid at the agent→human boundary, in the spirit of CI / pre-commit — not a correctness guarantee.
+
 ## vs caveman & ponytail
 
 Shaman stands on their shoulders — both are credited below, and their best hard-won rules are folded into shaman's ruleset. Honest positioning:
@@ -92,6 +110,7 @@ Shaman stands on their shoulders — both are credited below, and their best har
 |---|---|---|---|
 | Focus | terse prose + input compression (Go proxy, 26 compressors) | minimal code (decision ladder) | both pillars + **prompt scoring** |
 | Prompt gate / scoring | — | — | **0–100 score, block/enrich, CLI** |
+| Verify the agent's "done" | — | — | **checks + security scan on a completion claim** |
 | Per-session user benchmarks | `/caveman-stats` | — (published medians only) | `/shaman-bench` on your transcripts |
 | Multi-tool rules | 40+ agents, hand-written profiles | 20+ tools, 16 hand-synced copies + CI check | 8+ tools, **generated from one source** — drift impossible by construction |
 | Injected ruleset size | ~1–1.5k tokens/turn (their own honest number) | ~750 tokens | **642 tokens, once per session** (measured) |
@@ -218,14 +237,14 @@ All eight are **generated from `rules/core.md`** by `src/lib/adapters.js` — on
 - **Zero dependencies.** Plain Node stdlib — engine, hooks, CLI, tests. Nothing to install, nothing to audit.
 - **One source of truth.** Every tool adapter is generated from `rules/core.md`; the scoring engine behind the hook, the command, and the CLI is one module.
 - **Fail open.** Every hook wraps in try/catch and exits 0 on its own errors — a style plugin must never break your session.
-- **Tested and gated.** 59 tests (`node --test`, zero frameworks) including self-tests for every benchmark correctness gate, CI on Linux + Windows × Node 20/22/24, and the gate benchmark runs as a regression gate: one false block fails the build.
+- **Tested and gated.** 102 tests (`node --test`, zero frameworks) including the verify hook, the security scanner, and self-tests for every benchmark correctness gate; CI on Linux + Windows × Node 20/22/24, and the gate benchmark runs as a regression gate: one false block fails the build.
 - **No silent claims.** Benchmarks come from committed scripts and your own transcripts, not our marketing.
 
 ## Credits
 
 - [caveman](https://github.com/JuliusBrussee/caveman) by Julius Brussee (MIT) — the token-economy DNA and several hard-won rules folded into shaman v0.2: never invent abbreviations (the tokenizer splits them — zero saved), no arrow chains, compression must never add words. Caveman's own benchmark reports ~65% output reduction; shaman measures ~47% on its matched-content corpus and claims nothing more until your `/shaman-bench` says so.
 - [ponytail](https://github.com/DietrichGebert/ponytail) by Dietrich Gebert (MIT) — the decision ladder and the lazy-senior-dev philosophy, plus v0.2 refinements from ponytail v4: understand before you climb, root-cause over symptom, deliberate shortcuts marked with their ceiling, non-trivial logic leaves one runnable check.
-- Shaman adds the third pillar neither has: scoring the prompt itself.
+- Shaman adds what neither has: scoring the prompt itself (v0.2), and verifying the agent's "done" against your checks plus a security scan (v0.4).
 
 ## License
 

@@ -4,6 +4,21 @@ All notable changes to shaman. Format follows [Keep a Changelog](https://keepach
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-20
+
+Verification release. The theme shifts from nudging tokens (which we measured at ~1% of real session cost) toward verifying the agent's output.
+
+### Added
+- **`verify` — a Stop hook that checks the agent's "done" against reality.** When a session edited code and the final message claims completion, it runs the repo's checks (opt-in via `.shaman.json` → `verify.checks`) and scans the edited files for high-severity issues (hardcoded secrets, interpolated SQL, `eval`/`new Function`, `shell=True`/`shell:true`, `os.system`, unsafe deserialization). A claim contradicted by a red check or a real finding is blocked (exit 2) with the evidence, so the agent keeps working instead of reporting done. Conservative by design: silent unless completion is explicitly claimed, WIP wording never blocks, findings in test files never block, each issue is confronted at most once per session, fully fail-open. Logged to `~/.claude/shaman/verify.jsonl`. Disable via `verify: "off"` in state.json or `.shaman.json`.
+- **Convergence instrumentation** — the Stop hook (`bench.js`) now records per-session `callsBeforeFirstEdit`, `exploreCalls`, `readTokens`, and `repo`; `shaman bench` aggregates them (median, on-vs-off) alongside gate telemetry — band shares and confirm proceed-rate — from the new `gate.jsonl`.
+- **`bench/autopsy.mjs`** — token autopsy over your real sessions, showing where cost actually goes (context ingest, not output).
+
+### Changed
+- Security scanner (`src/lib/scan.js`) is calibrated on a 649-file corpus of real agent-authored code: high-signal rules only, ~0.8% block rate versus a generic scanner's ~17% noise. `med`-severity rules (innerHTML, `yaml.load`, `new Function`) are logged but never block.
+
+### Honest scope
+- `verify` catches a false "done" only when it has a **mechanical** signal (a red check or a security finding). Behavioral or subjective incompleteness — "the UX isn't right", "these two parts don't interact well" — is out of reach and no automated check catches it. This is a verification aid at the agent→human boundary, in the spirit of CI/pre-commit, not a guarantee of correctness.
+
 ## [0.3.0] - 2026-08-18
 
 ### Added
@@ -45,7 +60,8 @@ The "prove it" release: prompt scoring, any-tool support, and benchmarks with te
 
 Initial release: terse talk (caveman DNA), decision ladder (ponytail DNA), prompt gate (coach/enrich), per-session token benchmarks, static rule files for Cursor/Codex/Copilot.
 
-[Unreleased]: https://github.com/johnklaumann/shaman/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/johnklaumann/shaman/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/johnklaumann/shaman/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/johnklaumann/shaman/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/johnklaumann/shaman/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/johnklaumann/shaman/compare/v0.1.0...v0.2.0
