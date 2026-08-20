@@ -16,7 +16,9 @@
 // UserPromptSubmit cannot rewrite the prompt (per Claude Code docs) — it can only
 // block or inject context alongside it. Both are enough.
 'use strict';
-const { loadState, writeState, pruneSessions, effectiveMode, readStdin } = require('../lib/state');
+const fs = require('node:fs');
+const path = require('node:path');
+const { loadState, writeState, pruneSessions, effectiveMode, readStdin, shamanDir } = require('../lib/state');
 const { score, renderCard, QUESTION } = require('../lib/score');
 
 const COOLDOWN_MS = 3 * 60 * 1000;
@@ -50,14 +52,24 @@ function emitEnrich(r) {
   }));
 }
 
+// Router telemetry: one line per scored prompt to gate.jsonl — the gate's own
+// effectiveness data (% weak, confirm pause-vs-proceed) that nothing else
+// records. Best-effort; a telemetry write must never break a prompt.
+function logGate(state, input, r, action) {
+  try {
+    fs.mkdirSync(shamanDir(), { recursive: true });
+    fs.appendFileSync(path.join(shamanDir(), 'gate.jsonl'), JSON.stringify({
+      ts: new Date().toISOString(), session: input.session_id || null,
+      gate: state.gate, score: r.score, band: r.band, action,
+    }) + '\n');
+  } catch { /* telemetry is best-effort */ }
+}
+
 try {
   const input = readStdin();
   const prompt = (input.prompt || '').trim();
   const { state } = loadState();
 
-  // Mode switches typed as slash commands: persist here so the change survives
-  // even before the command's markdown runs. A mid-session mode change marks the
-  // session 'mixed' so bench comparisons exclude it.
   const modeCmd = prompt.match(/^\/(?:shaman:)?shaman\s+(lite|full|ultra|ab|off)\b/i);
   const gateCmd = prompt.match(/^\/(?:shaman:)?shaman-gate\s+(coach|enrich|confirm|off)\b/i);
   if (modeCmd || gateCmd) {
@@ -76,17 +88,16 @@ try {
   }
 
   if (state.gate === 'off') process.exit(0);
-  // ab off-day: the whole plugin is off — no enrichment either, or the
-  // "vanilla" arm of the A/B would be contaminated by injected context.
   if (state.mode === 'ab' && effectiveMode(state.mode) === 'off') process.exit(0);
   if (prompt.startsWith('/')) process.exit(0); // never gate slash commands
 
   const r = score(prompt);
-  if (r.exempt || r.band === 'strong') process.exit(0);
+  if (r.exempt) process.exit(0); // slash/ack/conversation — not a task, not the gate's business
+  if (r.band === 'strong') { logGate(state, input, r, 'pass'); process.exit(0); }
 
-  // Questions are conversation — enrich at most, never block.
   if (QUESTION.test(prompt)) {
-    if (r.band === 'weak') emitEnrich(r);
+    if (r.band === 'weak') { logGate(state, input, r, 'enrich'); emitEnrich(r); }
+    else logGate(state, input, r, 'pass');
     process.exit(0);
   }
 
@@ -102,11 +113,12 @@ try {
   if (r.band === 'weak' && blockingGate && !blockedRecently) {
     blocks[input.session_id] = now;
     writeState({ ...state, blocks });
+    logGate(state, input, r, state.gate === 'confirm' ? 'pause' : 'block');
     process.stderr.write(state.gate === 'confirm' ? confirmMessage(r) : coachMessage(r));
     process.exit(2);
   }
 
-  // medium, or weak within cooldown, or enrich mode: inject context, never block
+  logGate(state, input, r, 'enrich');
   emitEnrich(r);
   process.exit(0);
 } catch {

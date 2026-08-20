@@ -96,11 +96,9 @@ async function runCell(task, withRules, trial) {
     };
     console.log(`    ${task.id} ${withRules ? 'on ' : 'off'} t${trial}: ${cell.done ? 'DONE' : 'FAIL(' + cell.reason.slice(0, 60) + ')'} — ${cell.turns} turns, ${(cell.ms / 1000).toFixed(0)}s, $${cell.cost.toFixed(3)}, +${cell.added} loc, out ${cell.output}`);
     return cell;
+  } catch (err) {
+    return { error: String((err && err.message) || err) };
   } finally {
-    // The agent may leave its own `node server.js` running in the workspace
-    // (it started one to test its endpoint) — that grandchild holds the dir on
-    // Windows. Cleanup is best-effort: a leaked temp dir is acceptable debris,
-    // killing a paid run over rmdir is not.
     try {
       fs.rmSync(dir, { recursive: true, force: true, maxRetries: 8, retryDelay: 150 });
     } catch {
@@ -113,7 +111,6 @@ const leftovers = [];
 
 const mean = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
 
-// --only=<id> runs a single ticket (harness debugging / smoke tests).
 const only = process.argv.find((a) => a.startsWith('--only='))?.slice(7);
 const tasks = fs.readFileSync(path.join(here, 'corpus', 'agentic-tasks.jsonl'), 'utf8')
   .split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l))
@@ -180,7 +177,6 @@ fs.writeFileSync(path.join(here, 'results', 'agentic.json'),
   JSON.stringify({ model: MODEL, trials: TRIALS, rows, off, on, spendUsd: spend }, null, 2));
 console.log(`\nwrote bench/results/agentic.json`);
 
-// Second cleanup pass: agent-spawned servers are dead by now.
 for (const dir of leftovers) {
   try { fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3, retryDelay: 200 }); } catch {}
 }

@@ -97,6 +97,26 @@ test('/shaman-gate confirm persists the mode', () => {
   fs.rmSync(cfg, { recursive: true, force: true });
 });
 
+test('gate telemetry: logs one line per scored prompt with score/band/action to gate.jsonl', () => {
+  const cfg = makeConfig({ mode: 'full', gate: 'confirm' });
+  runGate(cfg, 'fix it', 's-tel');                                    // weak + confirm -> pause
+  runGate(cfg, 'Fix the token expiry check in auth/middleware.ts — expired tokens still pass, must reject with 401.', 's-tel2'); // strong -> pass
+  const lines = fs.readFileSync(path.join(cfg, 'shaman', 'gate.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  const pause = lines.find((l) => l.action === 'pause');
+  assert.ok(pause, 'a pause was logged');
+  assert.equal(pause.band, 'weak');
+  assert.equal(typeof pause.score, 'number');
+  assert.ok(lines.some((l) => l.action === 'pass'), 'the strong prompt logged a pass');
+  fs.rmSync(cfg, { recursive: true, force: true });
+});
+
+test('gate telemetry: disabled gate writes nothing', () => {
+  const cfg = makeConfig({ mode: 'full', gate: 'off' });
+  runGate(cfg, 'fix it', 's-off');
+  assert.equal(fs.existsSync(path.join(cfg, 'shaman', 'gate.jsonl')), false);
+  fs.rmSync(cfg, { recursive: true, force: true });
+});
+
 test('gate off: everything passes untouched', () => {
   const cfg = makeConfig({ mode: 'full', gate: 'off' });
   const r = runGate(cfg, 'fix it');
